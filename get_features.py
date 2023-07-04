@@ -4,7 +4,7 @@ import torch
 import pandas as pd
 import matplotlib.pyplot as plt
 import talib as ta
-
+import csv
 stock_codes=['QQQ','AMD','NVDA','TMS']
 train_key = 'SOXX'
 train_start_date = '20200101'
@@ -177,6 +177,14 @@ def create_dataset(stock_codes,targe_key,start_date,end_date):
         month_max_value = max(np.max(df[key,'month']['成交额']),month_max_value)
         month_min_value = max(np.min(df[key,'month']['成交额']),month_min_value)
     
+    for key in stock_codes:
+        csv_df = pd.DataFrame(data=df[key,'day'],index=None)
+        csv_df.to_csv(str(start_date)+str(end_date)+str(key)+"day.csv")
+        csv_df = pd.DataFrame(data=df[key,'week'],index=None)
+        csv_df.to_csv(str(start_date)+str(end_date)+str(key)+"week.csv")
+        csv_df = pd.DataFrame(data=df[key,'month'],index=None)
+        csv_df.to_csv(str(start_date)+str(end_date)+str(key)+"month.csv")
+
     return df
         
 def dataset_reshape(df,target_key,stock_codes):
@@ -184,6 +192,7 @@ def dataset_reshape(df,target_key,stock_codes):
     dataX,dataY = [],[]
     week_index = 0
     month_index = 0
+    print("inside dataset reshape module")
     print(df[stock_codes[0],'day'].shape[0])
 
     for i in range(df[stock_codes[0],'day'].shape[0]):
@@ -302,12 +311,18 @@ def dataset_reshape(df,target_key,stock_codes):
     dataX = dataX.reshape(-1,1,int(dataX.shape[1]))
     dataY = dataY.reshape(-1,1)
 
-    print("reshaped layout seq(day),cin(37day*21+5week*21+5mout*21)*3stock")
+    print("reshaped layout seq(day),cin(7day*21+5week*21+5mouth*21)*3stock")
     print(dataX.shape)
     print(dataY.shape)
 
     data_x = torch.from_numpy(dataX).float()
     data_y = torch.from_numpy(dataY).float()
+
+    x_df = pd.DataFrame(np.reshape(data_x,(dataX.shape[0],dataX.shape[-1])))
+    y_df = pd.DataFrame(np.reshape(data_y,(dataY.shape[0],dataY.shape[-1])))
+
+    x_df.to_csv(str(target_key)+str(stock_codes)+"_x.csv")
+    y_df.to_csv(str(target_key)+str(stock_codes)+"_y.csv")
 
     return data_x, data_y
 

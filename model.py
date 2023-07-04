@@ -7,7 +7,7 @@ import math
 import torch.nn.functional as F
 
 class LayerNorm(nn.Module):
-    def __init(self,d_model,eps=1e-12):
+    def __init__(self,d_model,eps=1e-12):
         super(LayerNorm,self).__init__()
         self.gamma = nn.Parameter(torch.ones(d_model))
         self.beta = nn.Parameter(torch.zeros(d_model))
@@ -158,18 +158,15 @@ class tuEncoder(nn.Module):
         super(tuEncoder,self).__init__()
         # input [batch,input_size]
         # output [batch,output_size]
-        self.layer1 == nn.Linear(in_features=input_size,out_features=d_model)
-        self.layers == nn.ModuleList([EncoderLayer(d_model=d_model,
-        ffn_hidden=ffn_hidden,
-        n_head=n_head,
-        drop_prob=drop_prob)for _ in range(n_layers)])
-        self.layer2 = nn.Linear(in_features=d_model*68,out_features=1)
+        self.layer1 = nn.Linear(in_features=input_size,out_features=d_model)
+        self.layers = nn.ModuleList([EncoderLayer(d_model=d_model,ffn_hidden=ffn_hidden,n_head=n_head,drop_prob=drop_prob)for _ in range(n_layers)])
+        self.layer2 = nn.Linear(in_features=d_model,out_features=1)
 
     def forward(self,x,s_mask):
         x = self.layer1(x)
         for layer in self.layers:
             x = layer(x,s_mask) # where s_mask is score mask
         # output [batch,seq cout]
-        x = self.layer2(x.reshape(-1,68*1024))
-
+        x = self.layer2(x)
+        print(x.shape)
         return x
