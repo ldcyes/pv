@@ -5,12 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import talib as ta
 import csv
-stock_codes=['QQQ','AMD','NVDA','TMS']
-train_key = 'SOXX'
-train_start_date = '20200101'
-train_end_date = '20200101'
-test_start_date = '20200101'
-test_end_date = '20200101'
+
 
 def show_plot(arr,key_name):
     plt.clf()
@@ -24,7 +19,7 @@ def data_norm(data_in,key):
     max_value = np.max(dataset)
     min_value = np.min(dataset)
     scalar = max_value -min_value
-    data_in[str(key)+'_norm'] = list(map(lambda x: x/ scalar,dataset))
+    data_in[str(key)+'_norm'] = list(map(lambda x: x/max_value,dataset))
     return data_in
 
 def get_bolls(dw):
@@ -93,10 +88,10 @@ def is_up_7down(dw):
         for j in range(50):
         # find 1st down
             if(i-j>=0):
-                if(dw.loc[i-j,'涨跌幅']<0.0):
+                if(dw.loc[i-j,'涨跌幅']<0.0):# count one if down
                     k=k+1
                 if(k>6):
-                    if(dw.loc[i,'收盘']/dw.loc[i-j,'收盘']>= 1.2):
+                    if(dw.loc[i,'收盘']/dw.loc[i-j,'收盘']>= 1.2):# if +20% and 
                         is_up_7down_flag = 1
                         break
         dw.loc[i,'is_up_7down'] = is_up_7down_flag
@@ -284,7 +279,7 @@ def dataset_reshape(df,target_key,stock_codes):
         dataX.append(dataX_tmp)
         # for each day, predict 20 day after price
         if((i+20)<df[target_key,'day'].shape[0]):
-            dataY.append(df[target_key,'day']['收盘_norm'][i+20]/df[target_key,'day']['收盘_norm'][i])
+            dataY.append(df[target_key,'day']['收盘_norm'][i+20])
         else:
             dataY.append(0)
         

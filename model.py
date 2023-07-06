@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch
 import math
 import torch.nn.functional as F
-
+### https://github.com/hyunwoongko/transformer/blob/master/models/model/encoder.py
 class LayerNorm(nn.Module):
     def __init__(self,d_model,eps=1e-12):
         super(LayerNorm,self).__init__()
@@ -168,5 +168,5 @@ class tuEncoder(nn.Module):
             x = layer(x,s_mask) # where s_mask is score mask
         # output [batch,seq cout]
         x = self.layer2(x)
-        print(x.shape)
+        #print(x.shape)
         return x
