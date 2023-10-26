@@ -18,9 +18,9 @@ def data_norm(data_in,key):
     dataset = data_in[key].astype('float')
     max_value = np.max(dataset)
     min_value = np.min(dataset)
-    scalar = max_value -min_value
-    data_in[str(key)+'_norm'] = list(map(lambda x: x/max_value,dataset))
-    return data_in
+    scalar = max_value*2 -min_value
+    data_in[str(key)+'_norm'] = list(map(lambda x: (x-min_value)/scalar,dataset))
+    return data_in,min_value,scalar
 
 def get_bolls(dw):
     dw.loc[:,'upper'],dw.loc[:,'middle'],dw.loc[:,'lower'] = ta.BBANDS(
@@ -156,23 +156,23 @@ def create_dataset(stock_codes,targe_key,start_date,end_date):
         df[key,'month'] = is_down_7up(df[key,'month'])
         df[key,'month'] = is_up_7down(df[key,'month'])
 
+        csv_df = pd.DataFrame(data=df[key,'day'],index=None)
+        csv_df.to_csv(str(start_date)+str(end_date)+str(key)+"day_raw.csv")
+        csv_df = pd.DataFrame(data=df[key,'week'],index=None)
+        csv_df.to_csv(str(start_date)+str(end_date)+str(key)+"week_raw.csv")
+        csv_df = pd.DataFrame(data=df[key,'month'],index=None)
+        csv_df.to_csv(str(start_date)+str(end_date)+str(key)+"month_raw.csv")
+
         feature_list = ['开盘','收盘','最高','最低','成交量','upper','middle','lower','成交额']
         for feature_name in feature_list:
-            df[key,'day']  = data_norm(df[key,'day'],feature_name)
-            df[key,'week'] = data_norm(df[key,'week'],feature_name)
-            df[key,'month']= data_norm(df[key,'month'],feature_name)
-
-    day_max_value,day_min_value,week_max_value,week_min_value,month_max_value,month_min_value = 0,0,0,0,0,0
-
-    for key in stock_codes:
-        day_max_value = max(np.max(df[key,'day']['成交额']),day_max_value)
-        day_min_value = max(np.min(df[key,'day']['成交额']),day_min_value)
-        week_max_value = max(np.max(df[key,'week']['成交额']),week_max_value)
-        week_min_value = max(np.min(df[key,'week']['成交额']),week_min_value)
-        month_max_value = max(np.max(df[key,'month']['成交额']),month_max_value)
-        month_min_value = max(np.min(df[key,'month']['成交额']),month_min_value)
+            df[key,'day'],day_min,day_scalar  = data_norm(df[key,'day'],feature_name)
+            df[key,'week'],week_min,week_scalar = data_norm(df[key,'week'],feature_name)
+            df[key,'month'],month_max,month_scalar = data_norm(df[key,'month'],feature_name)
+            if((feature_name=='收盘') and (key== targe_key)):
+                close_min= day_min
+                close_scalar = day_scalar
     
-    for key in stock_codes:
+    for key in stock_codes+[targe_key]:
         csv_df = pd.DataFrame(data=df[key,'day'],index=None)
         csv_df.to_csv(str(start_date)+str(end_date)+str(key)+"day.csv")
         csv_df = pd.DataFrame(data=df[key,'week'],index=None)
@@ -180,7 +180,7 @@ def create_dataset(stock_codes,targe_key,start_date,end_date):
         csv_df = pd.DataFrame(data=df[key,'month'],index=None)
         csv_df.to_csv(str(start_date)+str(end_date)+str(key)+"month.csv")
 
-    return df
+    return df,close_min,close_scalar
         
 def dataset_reshape(df,target_key,stock_codes):
 
@@ -188,7 +188,7 @@ def dataset_reshape(df,target_key,stock_codes):
     week_index = 0
     month_index = 0
     print("inside dataset reshape module")
-    print(df[stock_codes[0],'day'].shape[0])
+    print("num of days for raw data",df[stock_codes[0],'day'].shape[0])
 
     for i in range(df[stock_codes[0],'day'].shape[0]):
         # caculate current week and mouth index
@@ -292,7 +292,7 @@ def dataset_reshape(df,target_key,stock_codes):
     dataX=np.array(dataX[102:-20][:])
     dataY=np.array(dataY[102:-20])
         
-    print("truncateed layout batch,cin")
+    print("truncated layout batch,cin, clip start 20 days")
     print(dataX.shape)
     print(dataY.shape)
 

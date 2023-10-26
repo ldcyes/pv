@@ -170,3 +170,36 @@ class tuEncoder(nn.Module):
         x = self.layer2(x)
         #print(x.shape)
         return x
+
+
+class MLP(nn.Module):
+    def __init__(self, input_dimension=128, hidden_dimension=64):
+        super(MLP, self).__init__()
+        
+        # First layer
+        self.fc1 = nn.Linear(input_dimension, hidden_dimension)
+
+        self.fc2 = nn.Linear(hidden_dimension, hidden_dimension)
+        # Second layer, outputs a single value so the output dimension is [batch]
+        self.fc3 = nn.Linear(hidden_dimension, 1)
+        self.layer_norm1 = nn.LayerNorm(normalized_shape=[input_dimension])
+        self.layer_norm = nn.LayerNorm(normalized_shape=[hidden_dimension])
+        self.relu1 = nn.GELU()
+        self.relu2 = nn.GELU()
+
+    def forward(self, x):
+        
+        x = self.layer_norm1(x)
+        x1 = self.fc1(x)
+        #print(x1)
+        x2 = self.relu1(x1)
+        #print(x2)
+        x3 = self.fc2(x2)
+        #print(x3)
+        x4 = self.relu1(x3)+x2
+        #print(x4)
+        x = self.fc3(self.layer_norm(x4))
+        #print(x)
+        x=x.reshape([-1,1])
+
+        return x  # Ensuring the dimension is [batch]
