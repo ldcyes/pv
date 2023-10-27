@@ -1,7 +1,6 @@
 import pandas as pd
 import efinance as ef
 import numpy as np
-import torch
 import pandas as pd
 import matplotlib.pyplot as plt
 import talib as ta
@@ -21,6 +20,21 @@ end_date   = '202301011'
 # price/20 day high
 # price/20 day low
 # price/price(-20)
+def get_near_high(df,day,day_range):
+    cur_high=df[key,'day']['收盘'][day]
+    for i in range(day_range):
+        if(day-i>=0):
+            if((df[key,'day']['收盘'][day-i]>cur_high) and (day-i>=0)):
+                cur_high = df[key,'day']['收盘'][day-i]
+    return cur_high
+
+def get_near_low(df,day,day_range):
+    cur_low=df[key,'day']['收盘'][day]
+    for i in range(day_range):
+        if(day-i>=0):
+            if((df[key,'day']['收盘'][day-i]<cur_low)):
+                cur_low = df[key,'day']['收盘'][day-i]
+    return cur_low
 
 def get_bolls(dw):
     dw.loc[:,'upper'],dw.loc[:,'middle'],dw.loc[:,'lower'] = ta.BBANDS(
@@ -54,12 +68,17 @@ for key in stock_keys:
             table.loc[df[key,'day']['日期'][day],str(key)+'date']   = df[key,'day']['日期'][day]
             table.loc[df[key,'day']['日期'][day],str(key)+'close']  = df[key,'day']['收盘'][day]
             table.loc[df[key,'day']['日期'][day],str(key)+'volume'] = df[key,'day']['成交量'][day]
+            table.loc[df[key,'day']['日期'][day],str(key)+'price/up day']  = df[key,'day']['收盘'][day]/df[key,'day']['upper'][day]
+            table.loc[df[key,'day']['日期'][day],str(key)+'price/mid day'] = df[key,'day']['收盘'][day]/df[key,'day']['middle'][day]
+            table.loc[df[key,'day']['日期'][day],str(key)+'price/low day'] = df[key,'day']['收盘'][day]/df[key,'day']['lower'][day]
             table.loc[df[key,'day']['日期'][day],str(key)+'price/up week']  = df[key,'day']['收盘'][day]/df[key,'week']['upper'][week_index]
             table.loc[df[key,'day']['日期'][day],str(key)+'price/mid week'] = df[key,'day']['收盘'][day]/df[key,'week']['middle'][week_index]
             table.loc[df[key,'day']['日期'][day],str(key)+'price/low week'] = df[key,'day']['收盘'][day]/df[key,'week']['lower'][week_index]
             table.loc[df[key,'day']['日期'][day],str(key)+'price/up month']  = df[key,'day']['收盘'][day]/df[key,'month']['upper'][month_index]
             table.loc[df[key,'day']['日期'][day],str(key)+'price/mid month'] = df[key,'day']['收盘'][day]/df[key,'month']['middle'][month_index]
             table.loc[df[key,'day']['日期'][day],str(key)+'price/low month'] = df[key,'day']['收盘'][day]/df[key,'month']['lower'][month_index]
+            table.loc[df[key,'day']['日期'][day],str(key)+'price/20high']  = df[key,'day']['收盘'][day]/get_near_high(df,day,20)
+            table.loc[df[key,'day']['日期'][day],str(key)+'price/20low'] = df[key,'day']['收盘'][day]/get_near_low(df,day,20)
 
             if(day-7>=0):
                 table.loc[df[key,'day']['日期'][day],str(key)+'7 day up']   =  ((df[key,'day']['收盘'][day]>df[key,'day']['开盘'][day]) and
@@ -77,15 +96,27 @@ for key in stock_keys:
                                                             (df[key,'day']['收盘'][day-5]<df[key,'day']['开盘'][day-5]) and
                                                             (df[key,'day']['收盘'][day-6]<df[key,'day']['开盘'][day-6]))
                                                            
+            if(day+20<len(df[key,'day'])):
+                table.loc[df[key,'day']['日期'][day],str(key)+'gain'] = df[key,'day']['收盘'][day+20]/df[key,'day']['收盘'][day]
 
-            if(day-20>=0):
-                table.loc[df[key,'day']['日期'][day],str(key)+'gain'] = df[key,'day']['收盘'][day]/df[key,'day']['收盘'][day-20]
-                 
+color=[]
 
-        
-#print(df.shape)
-#data_x = torch.from_numpy(df).float()
-#x_df = pd.DataFrame(np.reshape(data_x,(df.shape[0],df.shape[-1])))
+key = 'SOXX'
+for i in range(len(df[key,'day']['收盘'])):
+    if(table.loc[df[key,'day']['日期'][i],str(key)+'gain']<0.9):
+        color.append('green')
+    elif(table.loc[df[key,'day']['日期'][i],str(key)+'gain']>1.1):
+        color.append('red')
+    else:
+        color.append('blue')
 
-csv_df = pd.DataFrame(data=table,index=None)
-csv_df.to_csv(str(start_date)+str(end_date)+"day.csv")
+print(color)
+x = np.arange(len(df[key,'day']['收盘']))
+
+plt.scatter(x,df[key,'day']['收盘'],color=color)
+
+
+plt.show()
+
+#csv_df = pd.DataFrame(data=table,index=None)
+#csv_df.to_csv(str(start_date)+str(end_date)+"day.csv")
