@@ -8,7 +8,7 @@ import csv
 
 stock_keys=['QQQ','SOXX','NVDA','TSLA','MSA']
 start_date = '20120617'
-end_date   = '202301011'
+end_date   = '202301027'
 
 # price
 # price/boll_low(week)
@@ -113,10 +113,8 @@ for i in range(len(df[key,'day']['收盘'])):
 print(color)
 x = np.arange(len(df[key,'day']['收盘']))
 
-plt.scatter(x,df[key,'day']['收盘'],color=color)
+#plt.scatter(x,df[key,'day']['收盘'],color=color)
+#plt.show()
 
-
-plt.show()
-
-#csv_df = pd.DataFrame(data=table,index=None)
-#csv_df.to_csv(str(start_date)+str(end_date)+"day.csv")
+csv_df = pd.DataFrame(data=table,index=None)
+csv_df.to_csv(str(start_date)+str(end_date)+"day.csv")
