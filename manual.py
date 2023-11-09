@@ -8,7 +8,7 @@ import csv
 
 stock_keys=['QQQ','SOXX','NVDA','TSLA','MSA']
 start_date = '20120617'
-end_date   = '20231107'
+end_date   = '20231109'
 
 # price
 # price/boll_low(week)
@@ -81,14 +81,14 @@ for key in stock_keys:
             table.loc[df[key,'day']['日期'][day],str(key)+'price/20low'] = df[key,'day']['收盘'][day]/get_near_low(df,day,20)
 
             if(day-7>=0):
-                table.loc[df[key,'day']['日期'][day],str(key)+'7 day up']   =  ((df[key,'day']['收盘'][day]>df[key,'day']['开盘'][day]) and
+                table.loc[df[key,'day']['日期'][day],str(key)+'7 day up']   =  int((df[key,'day']['收盘'][day]>df[key,'day']['开盘'][day]) and
                                                             (df[key,'day']['收盘'][day-1]>df[key,'day']['开盘'][day-1]) and
                                                             (df[key,'day']['收盘'][day-2]>df[key,'day']['开盘'][day-2]) and
                                                             (df[key,'day']['收盘'][day-3]>df[key,'day']['开盘'][day-3]) and
                                                             (df[key,'day']['收盘'][day-4]>df[key,'day']['开盘'][day-4]) and
                                                             (df[key,'day']['收盘'][day-5]>df[key,'day']['开盘'][day-5]) and
                                                             (df[key,'day']['收盘'][day-6]>df[key,'day']['开盘'][day-6]))
-                table.loc[df[key,'day']['日期'][day],str(key)+'7 day down']   =  ((df[key,'day']['收盘'][day]<df[key,'day']['开盘'][day]) and
+                table.loc[df[key,'day']['日期'][day],str(key)+'7 day down']   =  int((df[key,'day']['收盘'][day]<df[key,'day']['开盘'][day]) and
                                                             (df[key,'day']['收盘'][day-1]<df[key,'day']['开盘'][day-1]) and
                                                             (df[key,'day']['收盘'][day-2]<df[key,'day']['开盘'][day-2]) and
                                                             (df[key,'day']['收盘'][day-3]<df[key,'day']['开盘'][day-3]) and
@@ -117,4 +117,4 @@ x = np.arange(len(df[key,'day']['收盘']))
 #plt.show()
 
 csv_df = pd.DataFrame(data=table,index=None)
-csv_df.to_csv(str(start_date)+str(end_date)+"day.csv")
+csv_df.to_csv("STOCK_DATA.csv")
