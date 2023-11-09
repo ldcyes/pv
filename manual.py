@@ -8,7 +8,7 @@ import csv
 
 stock_keys=['QQQ','SOXX','NVDA','TSLA','MSA']
 start_date = '20120617'
-end_date   = '202301027'
+end_date   = '20231107'
 
 # price
 # price/boll_low(week)
