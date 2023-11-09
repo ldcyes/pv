@@ -11,10 +11,13 @@ from sklearn.linear_model import Ridge
 from xgboost import XGBRegressor
 from sklearn.neural_network import MLPRegressor  
 import pandas as pd
+import numpy as np
 
 df_org = pd.read_csv("STOCK_DATA.csv")
-x_stocks=['SOXX','QQQ']
-y_stock='SOXX'
+#x_stocks=['SOXX','QQQ']
+#y_stock='SOXX'
+x_stocks=['981']
+y_stock='981'
 features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
                    "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low"]
 features_remain = []
@@ -71,8 +74,13 @@ model_list=[DecisionTreeRegressor(),
 model_name=['decision tree','SVM','RandomForest',#'MLP','SGD',
 'XGboost']
 i=0
-print(df_org['QQQdate'][-1:])
+print(df_org[y_stock+'date'][-1:])
 print(df_org[features_remain][-1:])
+confidence=[]
+price_list=[]
+error_mean_list=[]
+error_var_list=[]
+mean_price=0
 for model in model_list:
        
        print("------------------------------ new training and test --------------------------------")
@@ -83,6 +91,9 @@ for model in model_list:
        predictions = model.predict(test_x)
        print("trainning error")
        print(mean_squared_error(test_y, predictions))
+       
+       error_mean_list.append(np.mean(predictions))
+       error_var_list.append(np.var(predictions))
 
        list_data = [
        0.952793291,1.021870766,1.101747407,0.892838203,0.971634213,1.065684496,0.875137225,1.12606582,1.578738372,0.96806318,1.082120535]
@@ -105,7 +116,25 @@ for model in model_list:
        price=model.predict(df_org[features_x][-1:])
        print("predict value")
        print(price)
+       price_list.append(price.tolist()[0])
 
+print("------------------------------ summary --------------------------------")
+import math
+
+print(price_list)
+print(error_mean_list)
+print(error_var_list)
+
+for i in range(len(price_list)):
+       confidence.append(1 / (1 + math.exp(- (price_list[i] - error_mean_list[i])**2 / (2 * error_var_list[i]))))
+
+print("confidence")
+print(confidence)
+
+expected_value = sum([a*b for a,b in zip(confidence,price_list)]) / sum(confidence)
+
+print("final predict value")
+print(expected_value)
 
 
 
