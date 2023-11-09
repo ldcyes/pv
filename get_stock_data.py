@@ -100,7 +100,7 @@ for key in stock_keys:
                 table.loc[df[key,'day']['日期'][day],str(key)+'gain'] = df[key,'day']['收盘'][day+20]/df[key,'day']['收盘'][day]
 
 color=[]
-
+'''
 key = 'SOXX'
 for i in range(len(df[key,'day']['收盘'])):
     if(table.loc[df[key,'day']['日期'][i],str(key)+'gain']<0.9):
@@ -115,6 +115,7 @@ x = np.arange(len(df[key,'day']['收盘']))
 
 #plt.scatter(x,df[key,'day']['收盘'],color=color)
 #plt.show()
+'''
 
 csv_df = pd.DataFrame(data=table,index=None)
 csv_df.to_csv("STOCK_DATA.csv")

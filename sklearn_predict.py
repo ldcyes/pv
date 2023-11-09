@@ -12,16 +12,30 @@ from xgboost import XGBRegressor
 from sklearn.neural_network import MLPRegressor  
 import pandas as pd
 
-df = pd.read_csv("STOCK_DATA.csv")
-df=df.fillna(0)
+df_org = pd.read_csv("STOCK_DATA.csv")
+x_stocks=['SOXX','QQQ']
+y_stock='SOXX'
+features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
+                   "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low"]
+features_remain = []
+features_x = []
+for stock in x_stocks:
+       for feature in features:
+              features_remain.append(stock+feature)
+              features_x.append(stock+feature)
 
-features_remian = ["SOXX7 day up","SOXX7 day down","SOXXprice/up day","SOXXprice/mid day","SOXXprice/low day","SOXXprice/up week","SOXXprice/mid week","SOXXvolume",
-                   "SOXXprice/low week","SOXXprice/up month","SOXXprice/mid month","SOXXprice/low month","SOXXprice/20high","SOXXprice/20low",
-                   "QQQ7 day up","QQQ7 day down","QQQprice/up day","QQQprice/mid day","QQQprice/low day","QQQprice/up week","QQQprice/mid week","QQQvolume",
-                   "QQQprice/low week","QQQprice/up month","QQQprice/mid month","QQQprice/low month","QQQprice/20high","QQQprice/20low"]
+features_remain.append(y_stock+"gain")
 
-print(df.shape)
-
+print("orginal data shape")
+print(df_org.shape)
+filtered_df = df_org[features_remain][0:-2]
+print("get require feature data shape")
+print(filtered_df.shape)
+filtered_df= filtered_df.dropna()
+print("drop NA value data shape")
+print(filtered_df.shape)
+print(filtered_df)
+'''
 filtered_df = df[(df['SOXXprice/up day'] != 0) & (df['SOXXprice/mid day'] != 0) & (df['SOXXprice/low day'] != 0) &
                  (df['SOXXprice/up week'] != 0) & (df['SOXXprice/mid week'] != 0) & (df['SOXXprice/low week'] != 0)&
                  (df['SOXXprice/up month'] != 0) & (df['SOXXprice/mid month'] != 0) & (df['SOXXprice/low month'] != 0)&
@@ -30,16 +44,19 @@ filtered_df = df[(df['SOXXprice/up day'] != 0) & (df['SOXXprice/mid day'] != 0) 
                  (df['QQQprice/up week'] != 0) & (df['QQQprice/mid week'] != 0) & (df['QQQprice/low week'] != 0)&
                  (df['QQQprice/up month'] != 0) & (df['QQQprice/mid month'] != 0) & (df['QQQprice/low month'] != 0)&
                  (df['QQQprice/20high'] != 0) & (df['QQQprice/20low'] != 0) &(df['QQQgain'] != 0)&(df['QQQvolume'] != 0)]
+'''
 
 #print(filtered_df)
 train,test = train_test_split(filtered_df,test_size=0.1,shuffle=True)
 
-train_x = train[features_remian]
-test_x = test[features_remian]
-print(train[features_remian].shape)
-print(test[features_remian].shape)
-train_y = train["SOXXgain"]
-test_y  = test["SOXXgain"]
+train_x = train[features_x]
+test_x = test[features_x]
+print("train data shape")
+print(train[features_remain].shape)
+print("test data shape")
+print(test[features_remain].shape)
+train_y = train[y_stock+"gain"]
+test_y  = test[y_stock+"gain"]
 
 ss = MinMaxScaler()
 
@@ -54,8 +71,8 @@ model_list=[DecisionTreeRegressor(),
 model_name=['decision tree','SVM','RandomForest',#'MLP','SGD',
 'XGboost']
 i=0
-print(df['QQQdate'][-1:])
-print(df[features_remian][-1:])
+print(df_org['QQQdate'][-1:])
+print(df_org[features_remain][-1:])
 for model in model_list:
        
        print("------------------------------ new training and test --------------------------------")
@@ -85,7 +102,7 @@ for model in model_list:
               "SOXXprice/20low"    :[list_data[10]]}
        '''
        #df_test=pd.DataFrame(data)
-       price=model.predict(df[features_remian][-1:])
+       price=model.predict(df_org[features_x][-1:])
        print("predict value")
        print(price)
 
