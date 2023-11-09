@@ -32,11 +32,12 @@ filtered_df = df[(df['SOXXprice/up day'] != 0) & (df['SOXXprice/mid day'] != 0) 
                  (df['QQQprice/20high'] != 0) & (df['QQQprice/20low'] != 0) &(df['QQQgain'] != 0)&(df['QQQvolume'] != 0)]
 
 #print(filtered_df)
-train,test = train_test_split(filtered_df,test_size=0.1)
+train,test = train_test_split(filtered_df,test_size=0.1,shuffle=True)
 
 train_x = train[features_remian]
 test_x = test[features_remian]
-#print(test[features_remian].shape)
+print(train[features_remian].shape)
+print(test[features_remian].shape)
 train_y = train["SOXXgain"]
 test_y  = test["SOXXgain"]
 
@@ -45,12 +46,13 @@ ss = MinMaxScaler()
 model_list=[DecisionTreeRegressor(),
             SVR(kernel='rbf',gamma=0.1,C=1.0),
             RandomForestRegressor(),
-            MLPRegressor(hidden_layer_sizes=(16, 64), solver='adam', alpha=1e-5, random_state=1),
-            SGDRegressor(penalty='l2', max_iter=10, tol=1e-3),
+            #MLPRegressor(hidden_layer_sizes=(64, 16), solver='adm', alpha=1e-5, random_state=1),
+            #SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
             XGBRegressor(objective='reg:squarederror')]
             #Ridge()]
 
-model_name=['decision tree','SVM','RandomForest','MLP','SGD','XGboost']
+model_name=['decision tree','SVM','RandomForest',#'MLP','SGD',
+'XGboost']
 i=0
 print(df['QQQdate'][-1:])
 print(df[features_remian][-1:])
