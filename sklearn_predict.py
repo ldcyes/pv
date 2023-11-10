@@ -12,6 +12,7 @@ from xgboost import XGBRegressor
 from sklearn.neural_network import MLPRegressor  
 import pandas as pd
 import numpy as np
+from sklearn.externals import joblib
 
 df_org = pd.read_csv("STOCK_DATA.csv")
 x_stocks=['TSLA','QQQ']
@@ -100,7 +101,7 @@ for target in targets:
               predictions = model.predict(test_x)
               print("trainning error")
               print(mean_squared_error(test_y, predictions))
-
+              joblib.dump(clf, 'svm_model.pkl')
               error_mean_list.append(np.mean(predictions))
               error_var_list.append(np.var(predictions))
 
