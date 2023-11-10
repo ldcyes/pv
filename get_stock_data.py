@@ -5,10 +5,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import talib as ta
 import csv
+from datetime import datetime
 
-stock_keys=['QQQ','SOXX','NVDA','TSLA','MSA']
+current_date = datetime.now()
+formatted_date = current_date.strftime('%Y%m%d')
+
+stock_keys=['QQQ','SOXX','NVDA','TSLA']
+#stock_keys=['中芯国际']
 start_date = '20120617'
-end_date   = '20231109'
+end_date   = str(formatted_date)#'20231110'
 
 # price
 # price/boll_low(week)
@@ -95,9 +100,15 @@ for key in stock_keys:
                                                             (df[key,'day']['收盘'][day-4]<df[key,'day']['开盘'][day-4]) and
                                                             (df[key,'day']['收盘'][day-5]<df[key,'day']['开盘'][day-5]) and
                                                             (df[key,'day']['收盘'][day-6]<df[key,'day']['开盘'][day-6]))
-                                                           
             if(day+20<len(df[key,'day'])):
-                table.loc[df[key,'day']['日期'][day],str(key)+'gain'] = df[key,'day']['收盘'][day+20]/df[key,'day']['收盘'][day]
+                table.loc[df[key,'day']['日期'][day],str(key)+'gain20'] = df[key,'day']['收盘'][day+20]/df[key,'day']['收盘'][day]
+            if(day+10<len(df[key,'day'])):
+                table.loc[df[key,'day']['日期'][day],str(key)+'gain10'] = df[key,'day']['收盘'][day+10]/df[key,'day']['收盘'][day]
+            if(day+5<len(df[key,'day'])):
+                table.loc[df[key,'day']['日期'][day],str(key)+'gain5'] = df[key,'day']['收盘'][day+5]/df[key,'day']['收盘'][day]
+            if(day+1<len(df[key,'day'])):
+                table.loc[df[key,'day']['日期'][day],str(key)+'gain1'] = df[key,'day']['收盘'][day+1]/df[key,'day']['收盘'][day]                                                           
+
 
 color=[]
 '''

@@ -14,10 +14,11 @@ import pandas as pd
 import numpy as np
 
 df_org = pd.read_csv("STOCK_DATA.csv")
-#x_stocks=['SOXX','QQQ']
-#y_stock='SOXX'
-x_stocks=['981']
-y_stock='981'
+x_stocks=['TSLA','QQQ']
+y_stock='TSLA'
+targets = ['1','5','10','20']
+#x_stocks=['中芯国际']
+#y_stock='中芯国际'
 features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
                    "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low"]
 features_remain = []
@@ -26,8 +27,8 @@ for stock in x_stocks:
        for feature in features:
               features_remain.append(stock+feature)
               features_x.append(stock+feature)
-
-features_remain.append(y_stock+"gain")
+for target in targets:
+       features_remain.append(y_stock+"gain"+target)
 
 print("orginal data shape")
 print(df_org.shape)
@@ -58,8 +59,8 @@ print("train data shape")
 print(train[features_remain].shape)
 print("test data shape")
 print(test[features_remain].shape)
-train_y = train[y_stock+"gain"]
-test_y  = test[y_stock+"gain"]
+#train_y = train[y_stock+"gain"]
+#test_y  = test[y_stock+"gain"]
 
 ss = MinMaxScaler()
 
@@ -76,30 +77,38 @@ model_name=['decision tree','SVM','RandomForest',#'MLP','SGD',
 i=0
 print(df_org[y_stock+'date'][-1:])
 print(df_org[features_remain][-1:])
-confidence=[]
-price_list=[]
-error_mean_list=[]
-error_var_list=[]
-mean_price=0
-for model in model_list:
-       
+
+
+for target in targets:
        print("------------------------------ new training and test --------------------------------")
-       print(model_name[i])
-       i=i+1
-       model.fit(train_x,train_y)
-
-       predictions = model.predict(test_x)
-       print("trainning error")
-       print(mean_squared_error(test_y, predictions))
+       print(str(target)+" day train predict #################")
+       train_y = train[y_stock+"gain"+target]
+       test_y  = test[y_stock+"gain"+target]
+       i=0
+       confidence=[]
+       price_list=[]
+       error_mean_list=[]
+       error_var_list=[]
+       mean_price=0
+       for model in model_list:
        
-       error_mean_list.append(np.mean(predictions))
-       error_var_list.append(np.var(predictions))
+              print("------ switch model ------")
+              print(model_name[i])
+              i=i+1
+              model.fit(train_x,train_y)
 
-       list_data = [
-       0.952793291,1.021870766,1.101747407,0.892838203,0.971634213,1.065684496,0.875137225,1.12606582,1.578738372,0.96806318,1.082120535]
+              predictions = model.predict(test_x)
+              print("trainning error")
+              print(mean_squared_error(test_y, predictions))
+
+              error_mean_list.append(np.mean(predictions))
+              error_var_list.append(np.var(predictions))
+
+              list_data = [
+              0.952793291,1.021870766,1.101747407,0.892838203,0.971634213,1.065684496,0.875137225,1.12606582,1.578738372,0.96806318,1.082120535]
 
        #print(accuracy_score(test_y,predictions))
-       '''
+              '''
        data ={"SOXXprice/up day"   :[list_data[0]],
               "SOXXprice/mid day"  :[list_data[1]],
               "SOXXprice/low day"  :[list_data[2]],
@@ -111,30 +120,30 @@ for model in model_list:
               "SOXXprice/low month":[list_data[8]],
               "SOXXprice/20high"   :[list_data[9]],
               "SOXXprice/20low"    :[list_data[10]]}
-       '''
-       #df_test=pd.DataFrame(data)
-       price=model.predict(df_org[features_x][-1:])
-       print("predict value")
-       print(price)
-       price_list.append(price.tolist()[0])
+              '''
+              #df_test=pd.DataFrame(data)
+              price=model.predict(df_org[features_x][-1:])
+              print("predict value")
+              print(price)
+              price_list.append(price.tolist()[0])
 
-print("------------------------------ summary --------------------------------")
-import math
+       print("------------------------------ summary --------------------------------")
+       import math
 
-print(price_list)
-print(error_mean_list)
-print(error_var_list)
+       print(price_list)
+       print(error_mean_list)
+       print(error_var_list)
 
-for i in range(len(price_list)):
-       confidence.append(1 / (1 + math.exp(- (price_list[i] - error_mean_list[i])**2 / (2 * error_var_list[i]))))
+       for i in range(len(price_list)):
+              confidence.append(1 / (1 + math.exp(- (price_list[i] - error_mean_list[i])**2 / (2 * error_var_list[i]))))
 
-print("confidence")
-print(confidence)
+       print("confidence")
+       print(confidence)
 
-expected_value = sum([a*b for a,b in zip(confidence,price_list)]) / sum(confidence)
+       expected_value = sum([a*b for a,b in zip(confidence,price_list)]) / sum(confidence)
 
-print("final predict value")
-print(expected_value)
+       print("final predict value")
+       print(expected_value)
 
 
 
