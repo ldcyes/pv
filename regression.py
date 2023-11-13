@@ -13,12 +13,13 @@ from xgboost import XGBRegressor
 from sklearn.neural_network import MLPRegressor  
 import pandas as pd
 import numpy as np
-from sklearn.externals import joblib
+import pickle
+from global_var import *
 
 df_org = pd.read_csv("STOCK_DATA.csv")
-x_stocks=['TSLA','QQQ']
-y_stock='TSLA'
-targets = ['1','5','10','20']
+#x_stocks=['TSLA','QQQ']
+#y_stock='TSLA'
+#targets = ['1','5','10','20']
 #x_stocks=['中芯国际']
 #y_stock='中芯国际'
 features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
@@ -34,20 +35,13 @@ for target in targets:
 
 print("orginal data shape")
 print(df_org.shape)
-filtered_df = df_org[features_remain][0:-2]
+print(df_org.shape[0])
+#filtered_df = df_org[features_remain][0:-2]
 print("get require feature data shape")
-print(filtered_df.shape)
-filtered_df= filtered_df.dropna()
-
-model_list=[DecisionTreeRegressor(),
-            SVR(kernel='rbf',gamma=0.1,C=1.0),
-            RandomForestRegressor(),
-            #MLPRegressor(hidden_layer_sizes=(64, 16), solver='adm', alpha=1e-5, random_state=1),
-            #SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
-            XGBRegressor(objective='reg:squarederror')]
-            #Ridge()]
-
-model_name=['decision tree','SVM','RandomForest','XGboost']
+#print(filtered_df.shape)
+#filtered_df= filtered_df.dropna()
+model_name=['decision tree','SVM','RandomForest',#'MLP','SGD',
+'XGboost']
 
 net_value = 10000
 cur_free  = 10000
@@ -56,19 +50,27 @@ cur_position = 0
 buy_position = 100
 sell_position = 100
 
-for day in df:
-    cur_price = dd
-    i=0
-    for model in model_list: 
-        model = joblib.load(model_name[i]+'_model.pkl')
-        i=i+1
-        predict_price=model.predict(df_org[features_x][-1:])
-    if(predict_price>1.05):
-        if((buy_position * cur_price) < cur_free ):
-            cur_free     =- buy_position*cur_price
-            cur_position =+ buy_position
-    if(predict_price<0.95):
-        cur_free     =+ sell_position*cur_price
-        cur_position =- sell_position
+for day in range(400,2600):
+    predict_avg = 0
+    cur_price=df_org[y_stock+'close'][day]
+    buy_condition = 0
+    sell_condition = 0
+    if(True):#not(df_org[features_x][:day].isna().any())):
+        for target in targets:
+            for model_name in model_name:
+                model = pickle.load(open(str(model_name)+str(target)+'_model.pkl','rb'))
+                predict_result = model.predict(df_org[features_x][:day])
+                predict_avg += predict_result 
+        buy_condition = predict_result/len(target)*len(model_name) > 1.05
+        sell_condition = predict_result/len(target)*len(model_name) < 0.95
+
+        if(buy_condition):
+            if((buy_position * cur_price) < cur_free ):
+                cur_free     =- buy_position*cur_price
+                cur_position =+ buy_position
+        if(sell_condition):
+            if(cur_position>sell_position):
+                cur_free     =+ sell_position*cur_price
+                cur_position =- sell_position
 
 print("final value :", cur_free+cur_position*cur_price)

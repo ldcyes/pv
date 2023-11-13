@@ -12,12 +12,13 @@ from xgboost import XGBRegressor
 from sklearn.neural_network import MLPRegressor  
 import pandas as pd
 import numpy as np
-from sklearn.externals import joblib
+import pickle
+from global_var import *
 
 df_org = pd.read_csv("STOCK_DATA.csv")
-x_stocks=['TSLA','QQQ']
-y_stock='TSLA'
-targets = ['1','5','10','20']
+#x_stocks=['TSLA','QQQ']
+#y_stock='TSLA'
+#targets = ['1','5','10','20']
 #x_stocks=['中芯国际']
 #y_stock='中芯国际'
 features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
@@ -95,18 +96,18 @@ for target in targets:
        
               print("------ switch model ------")
               print(model_name[i])
-              i=i+1
               model.fit(train_x,train_y)
 
               predictions = model.predict(test_x)
               print("trainning error")
               print(mean_squared_error(test_y, predictions))
-              joblib.dump(clf, 'svm_model.pkl')
+              with open(str(model_name[i])+str(target)+'_model.pkl','wb') as f:
+                     pickle.dump(model, f)
               error_mean_list.append(np.mean(predictions))
               error_var_list.append(np.var(predictions))
-
-              list_data = [
-              0.952793291,1.021870766,1.101747407,0.892838203,0.971634213,1.065684496,0.875137225,1.12606582,1.578738372,0.96806318,1.082120535]
+              i=i+1
+              #list_data = [
+              #0.952793291,1.021870766,1.101747407,0.892838203,0.971634213,1.065684496,0.875137225,1.12606582,1.578738372,0.96806318,1.082120535]
 
        #print(accuracy_score(test_y,predictions))
               '''

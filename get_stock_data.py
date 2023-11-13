@@ -6,13 +6,13 @@ import matplotlib.pyplot as plt
 import talib as ta
 import csv
 from datetime import datetime
-
+from global_var import *
 current_date = datetime.now()
 formatted_date = current_date.strftime('%Y%m%d')
 
-stock_keys=['QQQ','SOXX','NVDA','TSLA']
+#stock_keys=['QQQ','SOXX','NVDA','TSLA','中芯国际']
 #stock_keys=['中芯国际']
-start_date = '20120617'
+#start_date = '20120617'
 end_date   = str(formatted_date)#'20231110'
 
 # price
