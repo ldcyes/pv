@@ -15,6 +15,24 @@ import pandas as pd
 import numpy as np
 import pickle
 from global_var import *
+import matplotlib.pyplot as plt
+
+def draw_list(my_list,buy_point,sell_point,file_name):
+     # 使用numpy创建一个时间和数值对  
+    time = np.arange(len(my_list))  
+    value = my_list  
+    
+    # 创建曲线图  
+    plt.figure(figsize=(10, 6))  
+    plt.plot(time, value     ,label='net_value',color='red')
+    plt.plot(time, buy_point ,label='buy',color='blue')  
+    plt.plot(time, sell_point,label='sell',color='yellow')  
+    plt.title('Your Data Curve')  
+    plt.xlabel('Time')  
+    plt.ylabel('net value')  
+    plt.grid(True)  
+    #plt.show()
+    plt.savefig(file_name)
 
 df_org = pd.read_csv("STOCK_DATA.csv")
 #x_stocks=['TSLA','QQQ']
@@ -40,29 +58,41 @@ print(df_org.shape[0])
 print("get require feature data shape")
 #print(filtered_df.shape)
 #filtered_df= filtered_df.dropna()
-model_name=['decision tree','SVM','RandomForest',#'MLP','SGD',
-'XGboost']
+model_name=[
+#'decision tree',
+#'SVM',
+'RandomForest'
+#'MLP',
+#'SGD',
+#'XGboost'
+]
 
-net_value = 10000
-cur_free  = 10000
+net_value = 20000
+cur_free  = 20000
 cur_price = 0
 cur_position = 0
 buy_position = 100
 sell_position = 100
+
+buy_list  = []
+sell_list = []
+profile = []
 
 for day in range(400,2600):
     predict_avg = 0
     cur_price=df_org[y_stock+'close'][day]
     buy_condition = 0
     sell_condition = 0
+
     if(True):#not(df_org[features_x][:day].isna().any())):
+        predict_avg = 0
         for target in targets:
-            for model_name in model_name:
-                model = pickle.load(open(str(model_name)+str(target)+'_model.pkl','rb'))
-                predict_result = model.predict(df_org[features_x][:day])
-                predict_avg += predict_result 
-        buy_condition = predict_result/len(target)*len(model_name) > 1.05
-        sell_condition = predict_result/len(target)*len(model_name) < 0.95
+            for model_n in model_name:
+                model = pickle.load(open(str(model_n)+str(target)+'_model.pkl','rb'))
+                predict_result = model.predict(df_org[day:day+1][features_x])
+                predict_avg = predict_result+predict_avg
+        buy_condition = (predict_avg/(len(targets)*len(model_name))) > 1.05
+        sell_condition = (predict_avg/(len(targets)*len(model_name))) < 0.95
 
         if(buy_condition):
             if((buy_position * cur_price) < cur_free ):
@@ -73,4 +103,16 @@ for day in range(400,2600):
                 cur_free     =+ sell_position*cur_price
                 cur_position =- sell_position
 
+    if(buy_condition and ((buy_position * cur_price) < cur_free)):
+         buy_list.append(buy_position*cur_price)
+    else:
+         buy_list.append(0)
+    if(sell_condition and (cur_position>sell_position)):
+         sell_list.append(sell_position*cur_price)
+    else:
+         sell_list.append(0)
+    
+    profile.append(cur_free+cur_position*cur_price)
+    
+draw_list(profile,buy_list,sell_list,'this.jpg')
 print("final value :", cur_free+cur_position*cur_price)
