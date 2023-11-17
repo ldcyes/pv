@@ -89,27 +89,20 @@ for target in targets:
        i=0
        confidence=[]
        price_list=[]
-       error_mean_list=[]
-       error_var_list=[]
        mean_price=0
        for model in model_list:
        
               print("------ switch model ------")
               print(model_name[i])
               model.fit(train_x,train_y)
-
               predictions = model.predict(test_x)
               print("trainning error")
               print(mean_squared_error(test_y, predictions))
               with open(str(model_name[i])+str(target)+'_model.pkl','wb') as f:
                      pickle.dump(model, f)
-              error_mean_list.append(np.mean(predictions))
-              error_var_list.append(np.var(predictions))
-              i=i+1
-              #list_data = [
-              #0.952793291,1.021870766,1.101747407,0.892838203,0.971634213,1.065684496,0.875137225,1.12606582,1.578738372,0.96806318,1.082120535]
 
-       #print(accuracy_score(test_y,predictions))
+              i=i+1
+
               '''
        data ={"SOXXprice/up day"   :[list_data[0]],
               "SOXXprice/mid day"  :[list_data[1]],
@@ -124,6 +117,7 @@ for target in targets:
               "SOXXprice/20low"    :[list_data[10]]}
               '''
               #df_test=pd.DataFrame(data)
+              print(df_org[features_x][-1:].shape)
               price=model.predict(df_org[features_x][-1:])
               print("predict value")
               print(price)
@@ -132,20 +126,20 @@ for target in targets:
        print("------------------------------ summary --------------------------------")
        import math
 
-       print(price_list)
-       print(error_mean_list)
-       print(error_var_list)
-
-       for i in range(len(price_list)):
-              confidence.append(1 / (1 + math.exp(- (price_list[i] - error_mean_list[i])**2 / (2 * error_var_list[i]))))
-
-       print("confidence")
-       print(confidence)
-
-       expected_value = sum([a*b for a,b in zip(confidence,price_list)]) / sum(confidence)
-
-       print("final predict value")
-       print(expected_value)
+       #print(price_list)
+       #print(error_mean_list)
+       #print(error_var_list)
+#
+       #for i in range(len(price_list)):
+       #       confidence.append(1 / (1 + math.exp(- (price_list[i] - error_mean_list[i])**2 / (2 * error_var_list[i]))))
+#
+       #print("confidence")
+       #print(confidence)
+#
+       #expected_value = sum([a*b for a,b in zip(confidence,price_list)]) / sum(confidence)
+#
+       #print("final predict value")
+       #print(expected_value)
 
 
 
