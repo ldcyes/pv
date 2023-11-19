@@ -37,6 +37,22 @@ def draw_list(my_list,buy_point,sell_point,gold_point,positon,free,file_name):
     plt.legend()
     plt.savefig(file_name)
 
+def calculate_max_drawdown(prices):
+    """
+    计算最大回撤
+
+    参数：
+    - prices: 时间序列的价格数据（例如股票价格）
+
+    返回：
+    - max_drawdown: 最大回撤
+    """
+    cumulative_return = (1 + prices.pct_change()).cumprod()
+    peak = cumulative_return.expanding(min_periods=1).max()
+    drawdown = (cumulative_return - peak) / peak
+    max_drawdown = drawdown.min()
+    return max_drawdown
+
 df_org = pd.read_csv("STOCK_DATA.csv")
 #x_stocks=['TSLA','QQQ']
 #y_stock='TSLA'
@@ -136,6 +152,7 @@ for day in range(len(df_org[:])):
         gold_list.append(cur_price*start_value/first_price)
 
 print("valid days: ",len(profile))
+print("max drawdown: ",calculate_max_drawdown(profile))
 draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,'rich.jpg')
 print("final value :", cur_free+cur_position*cur_price)
 

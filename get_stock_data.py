@@ -60,19 +60,75 @@ for key in stock_keys:
         df[key,'day']   = get_bolls(df[key,'day'])
         df[key,'week']  = get_bolls(df[key,'week'])
         df[key,'month'] = get_bolls(df[key,'month'])
-        week_index = 0
-        month_index = 0
+        week_index = -1
+        month_index = -1
         for day in range(len(df[key,'day'])):
             if(df[key,'week']['日期'][week_index]==df[key,'day']['日期'][day]):
                 if(week_index+1<len(df[key,'week'])):
                     week_index +=1
-                    #print('hahah')
             if(df[key,'month']['日期'][month_index]==df[key,'day']['日期'][day]):
                 if(month_index+1<len(df[key,'month'])):
                     month_index +=1
             table.loc[df[key,'day']['日期'][day],str(key)+'date']   = df[key,'day']['日期'][day]
+            # the current week contain futrue data, please check 
+            table.loc[df[key,'day']['日期'][day],str(key)+'week_date']   = df[key,'week']['日期'][week_index]
+            table.loc[df[key,'day']['日期'][day],str(key)+'month_date']  = df[key,'month']['日期'][month_index]
             table.loc[df[key,'day']['日期'][day],str(key)+'close']  = df[key,'day']['收盘'][day]
             table.loc[df[key,'day']['日期'][day],str(key)+'volume'] = df[key,'day']['成交量'][day]
+            if(month_index-4>=0):
+            # near 5 week price and data
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0w_open']   = df[key,'week']['开盘'][week_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0w_close']  = df[key,'week']['收盘'][week_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0w_high']   = df[key,'week']['最高'][week_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0w_low']    = df[key,'week']['最低'][week_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0w_volume'] = df[key,'week']['成交量'][week_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1w_open']   = df[key,'week']['开盘'][week_index-1]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1w_close']  = df[key,'week']['收盘'][week_index-1]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1w_high']   = df[key,'week']['最高'][week_index-1]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1w_low']    = df[key,'week']['最低'][week_index-1]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1w_volume'] = df[key,'week']['成交量'][week_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2w_open']   = df[key,'week']['开盘'][week_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2w_close']  = df[key,'week']['收盘'][week_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2w_high']   = df[key,'week']['最高'][week_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2w_low']    = df[key,'week']['最低'][week_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2w_volume'] = df[key,'week']['成交量'][week_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3w_open']   = df[key,'week']['开盘'][week_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3w_close']  = df[key,'week']['收盘'][week_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3w_high']   = df[key,'week']['最高'][week_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3w_low']    = df[key,'week']['最低'][week_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3w_volume'] = df[key,'week']['成交量'][week_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4w_open']   = df[key,'week']['开盘'][week_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4w_close']  = df[key,'week']['收盘'][week_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4w_high']   = df[key,'week']['最高'][week_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4w_low']    = df[key,'week']['最低'][week_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4w_volume'] = df[key,'week']['成交量'][week_index-4]
+                # near 5 month price and data
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0m_open']   = df[key,'month']['开盘'][month_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0m_close']  = df[key,'month']['收盘'][month_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0m_high']   = df[key,'month']['最高'][month_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0m_low']    = df[key,'month']['最低'][month_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near0m_volume'] = df[key,'month']['成交量'][month_index]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1m_open']   = df[key,'month']['开盘'][month_index-1]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1m_close']  = df[key,'month']['收盘'][month_index-1]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1m_high']   = df[key,'month']['最高'][month_index-1]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1m_low']    = df[key,'month']['最低'][month_index-1]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near1m_volume'] = df[key,'month']['成交量'][month_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2m_open']   = df[key,'month']['开盘'][month_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2m_close']  = df[key,'month']['收盘'][month_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2m_high']   = df[key,'month']['最高'][month_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2m_low']    = df[key,'month']['最低'][month_index-2]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near2m_volume'] = df[key,'month']['成交量'][month_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3m_open']   = df[key,'month']['开盘'][month_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3m_close']  = df[key,'month']['收盘'][month_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3m_high']   = df[key,'month']['最高'][month_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3m_low']    = df[key,'month']['最低'][month_index-3]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near3m_volume'] = df[key,'month']['成交量'][month_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4m_open']   = df[key,'month']['开盘'][month_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4m_close']  = df[key,'month']['收盘'][month_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4m_high']   = df[key,'month']['最高'][month_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4m_low']    = df[key,'month']['最低'][month_index-4]
+                table.loc[df[key,'day']['日期'][day],str(key)+'near4m_volume'] = df[key,'month']['成交量'][month_index-4]
+            
             table.loc[df[key,'day']['日期'][day],str(key)+'price/up day']  = df[key,'day']['收盘'][day]/df[key,'day']['upper'][day]
             table.loc[df[key,'day']['日期'][day],str(key)+'price/mid day'] = df[key,'day']['收盘'][day]/df[key,'day']['middle'][day]
             table.loc[df[key,'day']['日期'][day],str(key)+'price/low day'] = df[key,'day']['收盘'][day]/df[key,'day']['lower'][day]
