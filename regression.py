@@ -53,14 +53,14 @@ def calculate_max_drawdown(prices):
     max_drawdown = drawdown.min()
     return max_drawdown
 
-df_org = pd.read_csv("STOCK_DATA.csv")
+df_org = pd.read_csv("STOCK_TEST_DATA.csv")
 #x_stocks=['TSLA','QQQ']
 #y_stock='TSLA'
 #targets = ['1','5','10','20']
 #x_stocks=['中芯国际']
 #y_stock='中芯国际'
-features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
-                   "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low"]
+#features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
+#                   "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low"]
 features_remain = []
 features_x = []
 for stock in x_stocks:
@@ -77,12 +77,12 @@ print("get require feature data shape")
 #print(filtered_df.shape)
 #filtered_df= filtered_df.dropna()
 model_name=[
-#'decision tree',
-#'SVM',
-'RandomForest'
+#'decision tree', #
+#'SVM',# 21
+#'RandomForest', #81
 #'MLP',
 #'SGD',
-#'XGboost'
+'XGboost' #93
 ]
 
 net_value = 20000
@@ -152,7 +152,7 @@ for day in range(len(df_org[:])):
         gold_list.append(cur_price*start_value/first_price)
 
 print("valid days: ",len(profile))
-print("max drawdown: ",calculate_max_drawdown(profile))
+print("max drawdown: ",calculate_max_drawdown(pd.Series(profile)))
 draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,'rich.jpg')
 print("final value :", cur_free+cur_position*cur_price)
 

@@ -15,14 +15,13 @@ import numpy as np
 import pickle
 from global_var import *
 
-df_org = pd.read_csv("STOCK_DATA.csv")
+df_org = pd.read_csv("STOCK_TRAIN_DATA.csv")
 #x_stocks=['TSLA','QQQ']
 #y_stock='TSLA'
 #targets = ['1','5','10','20']
 #x_stocks=['中芯国际']
 #y_stock='中芯国际'
-features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
-                   "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low"]
+
 features_remain = []
 features_x = []
 for stock in x_stocks:
@@ -41,16 +40,7 @@ filtered_df= filtered_df.dropna()
 print("drop NA value data shape")
 print(filtered_df.shape)
 print(filtered_df)
-'''
-filtered_df = df[(df['SOXXprice/up day'] != 0) & (df['SOXXprice/mid day'] != 0) & (df['SOXXprice/low day'] != 0) &
-                 (df['SOXXprice/up week'] != 0) & (df['SOXXprice/mid week'] != 0) & (df['SOXXprice/low week'] != 0)&
-                 (df['SOXXprice/up month'] != 0) & (df['SOXXprice/mid month'] != 0) & (df['SOXXprice/low month'] != 0)&
-                 (df['SOXXprice/20high'] != 0) & (df['SOXXprice/20low'] != 0) &(df['SOXXgain'] != 0)&(df['SOXXvolume'] != 0)&
-                 (df['QQQprice/up day'] != 0) & (df['QQQprice/mid day'] != 0) & (df['QQQprice/low day'] != 0) &
-                 (df['QQQprice/up week'] != 0) & (df['QQQprice/mid week'] != 0) & (df['QQQprice/low week'] != 0)&
-                 (df['QQQprice/up month'] != 0) & (df['QQQprice/mid month'] != 0) & (df['QQQprice/low month'] != 0)&
-                 (df['QQQprice/20high'] != 0) & (df['QQQprice/20low'] != 0) &(df['QQQgain'] != 0)&(df['QQQvolume'] != 0)]
-'''
+
 
 #print(filtered_df)
 train,test = train_test_split(filtered_df,test_size=0.1,shuffle=True)
@@ -117,7 +107,7 @@ for target in targets:
               "SOXXprice/20low"    :[list_data[10]]}
               '''
               #df_test=pd.DataFrame(data)
-              print(df_org[features_x][-1:].shape)
+              #print(df_org[features_x][-1:].shape)
               price=model.predict(df_org[features_x][-1:])
               print("predict value")
               print(price)
@@ -129,15 +119,15 @@ for target in targets:
        #print(price_list)
        #print(error_mean_list)
        #print(error_var_list)
-#
+
        #for i in range(len(price_list)):
        #       confidence.append(1 / (1 + math.exp(- (price_list[i] - error_mean_list[i])**2 / (2 * error_var_list[i]))))
-#
+
        #print("confidence")
        #print(confidence)
-#
+
        #expected_value = sum([a*b for a,b in zip(confidence,price_list)]) / sum(confidence)
-#
+
        #print("final predict value")
        #print(expected_value)
 
