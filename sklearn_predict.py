@@ -38,7 +38,7 @@ print(filtered_df)
 
 
 #print(filtered_df)
-train,test = train_test_split(filtered_df,test_size=0.3,shuffle=True)
+train,test = train_test_split(filtered_df,test_size=test_size,shuffle=True)
 
 train_x = train[features_x]
 test_x = test[features_x]
@@ -54,13 +54,14 @@ ss = MinMaxScaler()
 model_list=[DecisionTreeRegressor(),
             SVR(kernel='rbf',gamma=0.1,C=1.0),
             RandomForestRegressor(),
-            #MLPRegressor(hidden_layer_sizes=(64, 16), solver='adm', alpha=1e-5, random_state=1),
+            MLPRegressor(hidden_layer_sizes=(128,512,1024),activation='tanh', solver='adam', alpha=1e-5, random_state=1),
             #SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
             XGBRegressor(objective='reg:squarederror')]
             #Ridge()]
 
-model_name=['decision tree','SVM','RandomForest',#'MLP','SGD',
-'XGboost']
+model_name=['decision tree','SVM','RandomForest','MLP',#'SGD',
+            'XGboost']
+
 i=0
 print(df_org[y_stock+'date'][-1:])
 print(df_org[features_remain][-1:])

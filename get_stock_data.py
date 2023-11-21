@@ -10,8 +10,6 @@ from global_var import *
 current_date = datetime.now()
 formatted_date = current_date.strftime('%Y%m%d')
 
-#stock_keys=['QQQ','SOXX','NVDA','TSLA','中芯国际']
-#stock_keys=['中芯国际']
 if(train):
     start_date = train_start_date
     end_date   = train_end_date #str(formatted_date)
@@ -21,16 +19,6 @@ else:
     end_date   = str(formatted_date)
     file_name = "STOCK_TEST_DATA.csv"
 
-# price
-# price/boll_low(week)
-# price/boll_med
-# price/boll_high
-# price/boll_low(month)
-# price/boll_med
-# price/boll_high
-# price/20 day high
-# price/20 day low
-# price/price(-20)
 def get_near_high(df,day,day_range):
     cur_high=df[key,'day']['收盘'][day]
     for i in range(day_range):
