@@ -16,11 +16,6 @@ import pickle
 from global_var import *
 
 df_org = pd.read_csv("STOCK_TRAIN_DATA.csv")
-#x_stocks=['TSLA','QQQ']
-#y_stock='TSLA'
-#targets = ['1','5','10','20']
-#x_stocks=['中芯国际']
-#y_stock='中芯国际'
 
 features_remain = []
 features_x = []
@@ -28,7 +23,7 @@ for stock in x_stocks:
        for feature in features:
               features_remain.append(stock+feature)
               features_x.append(stock+feature)
-for target in targets:
+for target in train_targets:
        features_remain.append(y_stock+"gain"+target)
 
 print("orginal data shape")
@@ -43,7 +38,7 @@ print(filtered_df)
 
 
 #print(filtered_df)
-train,test = train_test_split(filtered_df,test_size=0.1,shuffle=True)
+train,test = train_test_split(filtered_df,test_size=0.3,shuffle=True)
 
 train_x = train[features_x]
 test_x = test[features_x]
@@ -71,7 +66,7 @@ print(df_org[y_stock+'date'][-1:])
 print(df_org[features_remain][-1:])
 
 
-for target in targets:
+for target in train_targets:
        print("------------------------------ new training and test --------------------------------")
        print(str(target)+" day train predict #################")
        train_y = train[y_stock+"gain"+target]
@@ -115,21 +110,6 @@ for target in targets:
 
        print("------------------------------ summary --------------------------------")
        import math
-
-       #print(price_list)
-       #print(error_mean_list)
-       #print(error_var_list)
-
-       #for i in range(len(price_list)):
-       #       confidence.append(1 / (1 + math.exp(- (price_list[i] - error_mean_list[i])**2 / (2 * error_var_list[i]))))
-
-       #print("confidence")
-       #print(confidence)
-
-       #expected_value = sum([a*b for a,b in zip(confidence,price_list)]) / sum(confidence)
-
-       #print("final predict value")
-       #print(expected_value)
 
 
 

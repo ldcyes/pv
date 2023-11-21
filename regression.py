@@ -54,20 +54,14 @@ def calculate_max_drawdown(prices):
     return max_drawdown
 
 df_org = pd.read_csv("STOCK_TEST_DATA.csv")
-#x_stocks=['TSLA','QQQ']
-#y_stock='TSLA'
-#targets = ['1','5','10','20']
-#x_stocks=['中芯国际']
-#y_stock='中芯国际'
-#features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
-#                   "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low"]
+
 features_remain = []
 features_x = []
 for stock in x_stocks:
        for feature in features:
               features_remain.append(stock+feature)
               features_x.append(stock+feature)
-for target in targets:
+for target in test_targets:
        features_remain.append(y_stock+"gain"+target)
 
 print("orginal data shape")
@@ -76,22 +70,15 @@ print(df_org.shape)
 print("get require feature data shape")
 #print(filtered_df.shape)
 #filtered_df= filtered_df.dropna()
-model_name=[
-#'decision tree', #
-#'SVM',# 21
-#'RandomForest', #81
-#'MLP',
-#'SGD',
-'XGboost' #93
-]
 
-net_value = 20000
-start_value = 20000
-cur_free  = 20000
+
+net_value = 100000
+start_value = 100000
+cur_free  = 100000
 cur_price = 0
 cur_position = 0
-buy_position = 100
-sell_position = 100
+buy_position = 10
+sell_position = 10
 
 buy_list  = []
 sell_list = []
@@ -116,13 +103,13 @@ for day in range(len(df_org[:])):
             print(cur_position,"start postion")
             is_start_day=0
         predict_avg = 0
-        for target in targets:
-            for model_n in model_name:
+        for target in test_targets:
+            for model_n in test_model_name:
                 model = pickle.load(open(str(model_n)+str(target)+'_model.pkl','rb'))
                 predict_result = model.predict(df_org[day:day+1][features_x])
                 predict_avg = predict_result+predict_avg
-        buy_condition  = (predict_avg/(len(targets)*len(model_name))) > 1.05
-        sell_condition = (predict_avg/(len(targets)*len(model_name))) < 0.95
+        buy_condition  = (predict_avg/(len(test_targets)*len(test_model_name))) >= 1.03
+        sell_condition = (predict_avg/(len(test_targets)*len(test_model_name))) <= 0.97
 
         if(buy_condition):
             if((buy_position * cur_price) < cur_free ):
@@ -153,6 +140,6 @@ for day in range(len(df_org[:])):
 
 print("valid days: ",len(profile))
 print("max drawdown: ",calculate_max_drawdown(pd.Series(profile)))
-draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,'rich.jpg')
+draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,str(test_targets)+str(test_model_name)+'rich.jpg')
 print("final value :", cur_free+cur_position*cur_price)
 

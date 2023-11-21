@@ -1,11 +1,21 @@
 x_stocks=['SOXX','QQQ']
 y_stock='SOXX'
-targets = ['1','5','10','20']
+train_targets = ['20','1','5','10']
+test_targets = ['20']
 buy_position = [10,20,30,40]
 sell_position = [10,20,30,40]
 stock_keys=['QQQ','SOXX','NVDA']#'TSLA']#'中芯国际']
+test_model_name=[
+#'decision tree' #
+#'SVM',# 21
+#'RandomForest', #81
+#'MLP',
+#'SGD',
+'XGboost' #93
+]
+
 start_date = '20120617'
-features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week","volume",
+features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week",#"volume",
                    "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low",
             'near1d_open','near1d_close','near1d_high','near1d_low','near1d_volume',
             'near2d_open','near2d_close','near2d_high','near2d_low','near2d_volume',
@@ -26,9 +36,9 @@ features = ["7 day up","7 day down","price/up day","price/mid day","price/low da
             'near5m_open','near5m_close','near5m_high','near5m_low','near5m_volume'
                    ]
 
-train = 0
+train = 1
 train_start_date = '20120617'
-train_end_date   = '20180618'
-test_start_date = '20180618'
+train_end_date   = '20210618'
+test_start_date = '20210618'
 test_end_date   = '20230330'
 test_size =0.1
