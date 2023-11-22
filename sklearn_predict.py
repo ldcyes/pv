@@ -15,7 +15,7 @@ import numpy as np
 import pickle
 from global_var import *
 
-df_org = pd.read_csv("STOCK_TRAIN_DATA.csv")
+df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
 
 features_remain = []
 features_x = []
@@ -84,7 +84,7 @@ for target in train_targets:
               predictions = model.predict(test_x)
               print("trainning error")
               print(mean_squared_error(test_y, predictions))
-              with open(str(model_name[i])+str(target)+'_model.pkl','wb') as f:
+              with open("./model/"+str(model_name[i])+str(target)+'_model.pkl','wb') as f:
                      pickle.dump(model, f)
 
               i=i+1

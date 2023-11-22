@@ -7,13 +7,12 @@ sell_position = [10,20,30,40]
 stock_keys=['QQQ','SOXX','NVDA']#'TSLA']#'中芯国际']
 test_model_name=[
 #'decision tree' #
-'SVM'# 21
-#'RandomForest', #81
-#'MLP',
+#'SVM'# 21
+'RandomForest', #81
+'MLP',
 #'SGD',
-#'XGboost' #93
+'XGboost' #93
 ]
-
 
 features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week",#"volume",
             "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low",
@@ -34,11 +33,11 @@ features = ["7 day up","7 day down","price/up day","price/mid day","price/low da
             #'near3m_open','near3m_close','near3m_high','near3m_low','near3m_volume',
             #'near4m_open','near4m_close','near4m_high','near4m_low','near4m_volume',
             #'near5m_open','near5m_close','near5m_high','near5m_low','near5m_volume'
-                   ]
+       ]
 
 train = 1
 train_start_date = '20120617'
 train_end_date   = '20210618'
-test_start_date = '20210618'
-test_end_date   = '20230330'
-test_size =0.3
+test_start_date  = '20210618'
+test_end_date    = '20230330'
+test_size = 0.3

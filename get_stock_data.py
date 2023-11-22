@@ -212,4 +212,4 @@ x = np.arange(len(df[key,'day']['收盘']))
 '''
 
 csv_df = pd.DataFrame(data=table,index=None)
-csv_df.to_csv(file_name)
+csv_df.to_csv("./stock_data/"+file_name)
