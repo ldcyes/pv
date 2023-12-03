@@ -19,7 +19,7 @@ else:
     end_date   = str(formatted_date)
     file_name = "STOCK_TEST_DATA.csv"
 
-def get_near_high(df,day,day_range):
+def get_near_high(df,key,day,day_range):
     cur_high=df[key,'day']['收盘'][day]
     for i in range(day_range):
         if(day-i>=0):
@@ -27,7 +27,7 @@ def get_near_high(df,day,day_range):
                 cur_high = df[key,'day']['收盘'][day-i]
     return cur_high
 
-def get_near_low(df,day,day_range):
+def get_near_low(df,key,day,day_range):
     cur_low=df[key,'day']['收盘'][day]
     for i in range(day_range):
         if(day-i>=0):
@@ -155,8 +155,8 @@ for key in stock_keys:
                     table.loc[df[key,'day']['日期'][day],str(key)+'price/up month']  = df[key,'day']['收盘'][day]/df[key,'month']['upper'][month_index-1]
                     table.loc[df[key,'day']['日期'][day],str(key)+'price/mid month'] = df[key,'day']['收盘'][day]/df[key,'month']['middle'][month_index-1]
                     table.loc[df[key,'day']['日期'][day],str(key)+'price/low month'] = df[key,'day']['收盘'][day]/df[key,'month']['lower'][month_index-1]
-                    table.loc[df[key,'day']['日期'][day],str(key)+'price/20high']    = df[key,'day']['收盘'][day]/get_near_high(df,day,20)
-                    table.loc[df[key,'day']['日期'][day],str(key)+'price/20low']     = df[key,'day']['收盘'][day]/get_near_low(df,day,20)
+                    table.loc[df[key,'day']['日期'][day],str(key)+'price/20high']    = df[key,'day']['收盘'][day]/get_near_high(df,key,day,20)
+                    table.loc[df[key,'day']['日期'][day],str(key)+'price/20low']     = df[key,'day']['收盘'][day]/get_near_low(df,key,day,20)
 
                     if(day-7>=0):
                         table.loc[df[key,'day']['日期'][day],str(key)+'7 day up']   =  int((df[key,'day']['收盘'][day]>df[key,'day']['开盘'][day]) and
