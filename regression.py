@@ -1,16 +1,4 @@
 from math import floor
-from sklearn import svm
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.svm import SVR
-from sklearn.linear_model import SGDRegressor  
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.metrics import accuracy_score
-from sklearn.metrics import mean_squared_error
-from sklearn.linear_model import Ridge
-from xgboost import XGBRegressor
-from sklearn.neural_network import MLPRegressor  
 import pandas as pd
 import numpy as np
 import pickle
@@ -111,6 +99,9 @@ for test_target in test_targets:
                 buy_condition  = predict_avg >= 1.05
                 sell_condition = predict_avg <= 0.95
 
+                buy_position = cur_free/cur_price*0.25
+                sell_position = cur_position*0.25
+
                 if(buy_condition):
                     if((buy_position * cur_price) < cur_free ):
                         cur_free     = cur_free- buy_position*cur_price
@@ -137,11 +128,11 @@ for test_target in test_targets:
 
                 profile.append(cur_free+cur_position*cur_price)
                 gold_list.append(cur_price*start_value/first_price)
-
+        print("------=====------",model_n)
         print("valid days: ",len(profile))
         print("predict: ",test_target,'days')
         print("max drawdown: ",calculate_max_drawdown(pd.Series(profile)))
-        draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/"+str(test_target)+str(model_n)+'rich.jpg')
+        draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/"+str(test_target)+str(model_n)+'.jpg')
         print("final value :", cur_free+cur_position*cur_price)
         print("win rate :", (cur_free+cur_position*cur_price)/gold_list[-1])
     
