@@ -62,7 +62,7 @@ def build_frame(stock_keys,start_date,end_date):
             df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101) # day
             df[key,'week']  = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=102) # week
             df[key,'month'] = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=103) # month
-            print(key)
+            #print(key)
             df[key,'day']   = get_bolls(df[key,'day'])
             df[key,'week']  = get_bolls(df[key,'week'])
             df[key,'month'] = get_bolls(df[key,'month'])
@@ -71,10 +71,9 @@ def build_frame(stock_keys,start_date,end_date):
             month_index = 0
 
             for day in range(len(df[key,'day'])):
-                if(gen_inc10_flag):
-                    record_condition = df[key,'day']['涨跌幅'][day] >= 10.0 and week_index-1>=0 and month_index-1>=0
-                else:
-                    record_condition = week_index-1>=0 and month_index-1>=0
+                
+                record_condition = df[key,'day']['涨跌幅'][day] >= 10.0 and week_index-1>=0 and month_index-1>=0
+
                 if(record_condition):
                     table.loc[table_row_index,'date']   = df[key,'day']['日期'][day]
                     # the currentable_row_i
@@ -190,12 +189,16 @@ def build_frame(stock_keys,start_date,end_date):
                                                                         (df[key,'day']['收盘'][day-6]<df[key,'day']['开盘'][day-6]))
                         if(day+20<len(df[key,'day'])):
                             table.loc[table_row_index,'gain20'] = df[key,'day']['收盘'][day+20]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'day20gain'] =df[key,'day']['收盘'][day+20]
                         if(day+10<len(df[key,'day'])):
                             table.loc[table_row_index,'gain10'] = df[key,'day']['收盘'][day+10]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'day10gain'] =df[key,'day']['收盘'][day+10]
                         if(day+5<len(df[key,'day'])):
                             table.loc[table_row_index,'gain5'] = df[key,'day']['收盘'][day+5]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'day5gain'] =df[key,'day']['收盘'][day+5]
                         if(day+1<len(df[key,'day'])):
                             table.loc[table_row_index,'gain1'] = df[key,'day']['收盘'][day+1]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'day1gain'] =df[key,'day']['收盘'][day+1]
                 table_row_index = table_row_index+1
                 # example week = 2012-7-12 day = 2012-7-11 week
                 if(df[key,'week']['日期'][week_index]==df[key,'day']['日期'][day]):
@@ -228,10 +231,14 @@ x = np.arange(len(df[key,'day']['收盘']))
 #plt.show()
 '''
 stocks0=ef.stock.get_members('399006')
-#stocks1=ef.stock.get_members('399001')
+stocks1=ef.stock.get_members('399001')#000852 #000905
+#stocks2=ef.stock.get_members('000852')
+stocks3=ef.stock.get_members('000905')
 list0=stocks0['股票名称']
-#list1=stocks1['股票名称']
-#stock_keys = pd.concat([list0,list1])
-table=build_frame(list(list0),start_date,end_date)
+list1=stocks1['股票名称']
+#list2=stocks2['股票名称']
+list3=stocks3['股票名称']
+stock_keys = pd.concat([list0,list1,list3])
+table=build_frame(list(stock_keys),start_date,end_date)
 csv_df = pd.DataFrame(data=table,index=None)
 csv_df.to_csv("./stock_data/"+file_name)
