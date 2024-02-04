@@ -1,0 +1,18 @@
+start money 2000 postion 100 return 264710
+
+TODO
+1. boll
+    SD = Square_root(((x0-MA)+(x1-MA)+..+(x19-MA))/N)
+    MA = SUM(day_close_price)/DAY_NUM, where N=20
+    MID = MA
+    UP  = MID + 2*SD
+    DOWN = MID - 2*SD
+
+2. 打板
+找到所有10%的股票
+
+
+3. 遍历实验
+
+
+EXPERIMENT

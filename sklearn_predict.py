@@ -66,8 +66,15 @@ i=0
 print(df_org[y_stock+'date'][-1:])
 print(df_org[features_remain][-1:])
 
+col_list = []
+for target in train_targets:
+       for string in [' pred',' confid']:
+              col_list.append(str(target)+string)
+
+res_df = pd.DataFrame(columns=col_list,index=model_name)
 
 for target in train_targets:
+       
        print("------------------------------ new training and test --------------------------------")
        print(str(target)+" day train predict #################")
        train_y = train[y_stock+"gain"+target]
@@ -87,30 +94,20 @@ for target in train_targets:
               with open("./model/"+str(model_name[i])+str(target)+'_model.pkl','wb') as f:
                      pickle.dump(model, f)
 
-              i=i+1
-
-              '''
-       data ={"SOXXprice/up day"   :[list_data[0]],
-              "SOXXprice/mid day"  :[list_data[1]],
-              "SOXXprice/low day"  :[list_data[2]],
-              "SOXXprice/up week"  :[list_data[3]],
-              "SOXXprice/mid week" :[list_data[4]],
-              "SOXXprice/low week" :[list_data[5]],
-              "SOXXprice/up month" :[list_data[6]],
-              "SOXXprice/mid month":[list_data[7]],
-              "SOXXprice/low month":[list_data[8]],
-              "SOXXprice/20high"   :[list_data[9]],
-              "SOXXprice/20low"    :[list_data[10]]}
-              '''
               #df_test=pd.DataFrame(data)
-              #print(df_org[features_x][-1:].shape)
+              print(df_org[features_x][-1:].shape)
               price=model.predict(df_org[features_x][-1:])
+              res_df.loc[str(model_name[i]),str(target)+' pred']=price
+              res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)
               print("predict value")
               print(price)
+              i=i+1
               price_list.append(price.tolist()[0])
 
        print("------------------------------ summary --------------------------------")
-       import math
+
+print(res_df)
+
 
 
 
