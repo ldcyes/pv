@@ -51,7 +51,7 @@ for stock in x_stocks:
               features_remain.append(stock+feature)
               features_x.append(stock+feature)
 for target in test_targets:
-       features_remain.append(y_stock+"gain"+target)
+       features_remain.append(y_stock+"gain"+str(target))
 
 print("orginal data shape")
 print(df_org.shape)
@@ -66,8 +66,8 @@ for test_target in test_targets:
     cur_free  = 100000
     cur_price = 0
     cur_position = 0
-    buy_position = 10
-    sell_position = 10
+    buy_position = 500
+    sell_position = 500
 
     buy_list  = []
     sell_list = []
@@ -94,9 +94,10 @@ for test_target in test_targets:
                 is_start_day=0
             predict_avg = 0
             for model_n in test_model_name:
-                model = pickle.load(open(str(model_n)+str(test_target)+'_model.pkl','rb'))
+                model = pickle.load(open('./model_save/'+str(model_n)+str(test_target)+'_model.pkl','rb'))
                 predict_result = model.predict(df_org[day:day+1][features_x])
                 predict_avg = predict_result+predict_avg
+
             buy_condition  = (predict_avg/(len(test_model_name))) >= 1.05
             sell_condition = (predict_avg/(len(test_model_name))) <= 0.95
 
@@ -130,7 +131,7 @@ for test_target in test_targets:
     print("valid days: ",len(profile))
     print("predict: ",test_target,'days')
     print("max drawdown: ",calculate_max_drawdown(pd.Series(profile)))
-    draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,str(test_target)+str(test_model_name)+'rich.jpg')
+    draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,'./results_pic/'+str(test_target)+'all_model_rich.jpg')
     print("final value :", cur_free+cur_position*cur_price)
     print("win rate :", (cur_free+cur_position*cur_price)/gold_list[-1])
 
