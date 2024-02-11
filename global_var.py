@@ -1,18 +1,19 @@
 # trainning and test following stocks
 x_stocks=['SOXX','QQQ']
 y_stock ='SOXX'
-train_targets = [3,5,10,20]
+train_targets = [20]
+data_targets = ['3','5','10','20']
 test_targets = ['20']
 buy_position = [10,20,30,40]
 sell_position = [10,20,30,40]
 # build following stocks
 stock_keys=['QQQ','SOXX','NVDA']#'TSLA']#'中芯国际']
 test_model_name=[
-'decision tree' #
-'SVM'# 21
+#'decision tree',
+#'SVM',
 'RandomForest', #81
-'MLP',
-'SGD',
+#'MLP',
+#'SGD',
 'XGboost' #93
 ]
 
@@ -39,7 +40,7 @@ features = ["7 day up","7 day down","price/up day","price/mid day","price/low da
        ]
 
 train = 1
-regress_start_date = '20150617'
+regress_start_date = 1500 # at lest 1000 days data 5 years
 train_start_date = '20120617'
 train_end_date   = '20231220'
 test_start_date  = '20140618'
