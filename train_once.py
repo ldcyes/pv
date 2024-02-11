@@ -66,7 +66,12 @@ print(df_org[y_stock+'date'][-1:])
 print("latest day features")
 print(df_org[features_remain][-1:])
 
-res_df=pd.DataFrame()
+col_list = []
+for target in train_targets:
+       for string in [' pred',' confid']:
+              col_list.append(str(target)+string)
+
+res_df = pd.DataFrame(columns=col_list,index=model_name)
 
 for target in train_targets:
        print("------------------------------ "+str(target)+" day train predict new training and test --------------------------------")
@@ -79,15 +84,21 @@ for target in train_targets:
        mean_price=0
        for model in model_list:
        
-              print("------ switch model ------")
-              print(model_name[i])
-              model.fit(train_x,train_y)
-              predictions = model.predict(test_x)
-              print("trainning error")
-              print(mean_squared_error(test_y, predictions))
-              res_df.loc[model_name[i],target]=str(mean_squared_error(test_y, predictions))+','+str(predictions)+'    '
-              with open('./model_save/'+str(model_name[i])+str(target)+'_model.pkl','wb') as f:
-                     pickle.dump(model, f)
-              i=i+1
+            print("------ switch model ------")
+            print(model_name[i])
+            model.fit(train_x,train_y)
+            predictions = model.predict(test_x)
+            print("trainning error")
+            print(mean_squared_error(test_y, predictions))
+            with open('./model_save/'+str(model_name[i])+str(target)+'_model.pkl','wb') as f:
+                   pickle.dump(model, f)
+            print("------ test latest day ------")
+            print(df_org[features_x][-1:].shape)
+            price=model.predict(df_org[features_x][-1:])
+            res_df.loc[str(model_name[i]),str(target)+' pred']  =price
+            res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)
+            print("predict value")
+            print(price)      
+            i=i+1
 
 print(res_df)
