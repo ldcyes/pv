@@ -12,7 +12,7 @@ formatted_date = current_date.strftime('%Y%m%d')
 
 if(train):
     start_date = train_start_date
-    end_date   = train_end_date #str(formatted_date)
+    end_date   = str(formatted_date)
     file_name = "STOCK_TRAIN_DATA.csv"
 else:
     start_date = test_start_date
@@ -174,14 +174,14 @@ def build_frame(stock_keys,start_date,end_date):
                                                                         (df[key,'day']['收盘'][day-4]<df[key,'day']['开盘'][day-4]) and
                                                                         (df[key,'day']['收盘'][day-5]<df[key,'day']['开盘'][day-5]) and
                                                                         (df[key,'day']['收盘'][day-6]<df[key,'day']['开盘'][day-6]))
-                        if(day+20<len(df[key,'day'])):
-                            table.loc[df[key,'day']['日期'][day],str(key)+'gain20'] = df[key,'day']['收盘'][day+20]/df[key,'day']['收盘'][day]
-                        if(day+10<len(df[key,'day'])):
-                            table.loc[df[key,'day']['日期'][day],str(key)+'gain10'] = df[key,'day']['收盘'][day+10]/df[key,'day']['收盘'][day]
-                        if(day+5<len(df[key,'day'])):
-                            table.loc[df[key,'day']['日期'][day],str(key)+'gain5'] = df[key,'day']['收盘'][day+5]/df[key,'day']['收盘'][day]
-                        if(day+1<len(df[key,'day'])):
-                            table.loc[df[key,'day']['日期'][day],str(key)+'gain1'] = df[key,'day']['收盘'][day+1]/df[key,'day']['收盘'][day]  
+                        if(day+train_targets[0]<len(df[key,'day'])):
+                            table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[0])] = df[key,'day']['收盘'][day+train_targets[0]]/df[key,'day']['收盘'][day]
+                        if(day+train_targets[1]<len(df[key,'day'])):
+                            table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[1])] = df[key,'day']['收盘'][day+train_targets[1]]/df[key,'day']['收盘'][day]
+                        if(day+train_targets[2]<len(df[key,'day'])):
+                            table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[2])] = df[key,'day']['收盘'][day+train_targets[2]]/df[key,'day']['收盘'][day]
+                        if(day+train_targets[3]<len(df[key,'day'])):
+                            table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[3])] = df[key,'day']['收盘'][day+train_targets[3]]/df[key,'day']['收盘'][day]  
                 # example week = 2012-7-12 day = 2012-7-11 week
                 if(df[key,'week']['日期'][week_index]==df[key,'day']['日期'][day]):
                     if((week_index+1)<len(df[key,'week'])):

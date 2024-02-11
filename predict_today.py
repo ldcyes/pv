@@ -3,7 +3,7 @@ import pandas as pd
 import pickle
 from global_var import *
 
-df_org = pd.read_csv("STOCK_TEST_DATA.csv")
+df_org = pd.read_csv("./stock_data/STOCK_TEST_DATA.csv")
 
 features_x = []
 for stock in x_stocks:
