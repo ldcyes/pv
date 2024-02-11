@@ -99,8 +99,10 @@ for date in range(regress_start_date,df_org.shape[0],1):
      filtered_df= filtered_df.replace([np.inf, -np.inf], np.nan).dropna()
      print("drop NA value data shape")
      print(filtered_df.shape)
-     #print(filtered_df)
-     train,test = train_test_split(filtered_df[features_remain][0:-2],test_size=test_size,shuffle=True)
+     print("train shape")
+     #print(filtered_df[features_remain][0:-1])
+     #print(filtered_df[features_remain])
+     train,test = train_test_split(filtered_df[features_remain][0:-1],test_size=test_size,shuffle=True)
      train_x = train[features_x]
      test_x = test[features_x]
      print("train data shape")
@@ -122,15 +124,20 @@ for date in range(regress_start_date,df_org.shape[0],1):
           #'MLP',
           #'SGD',
           'XGboost']
-     print(filtered_df.iloc[0][y_stock+'date'])
-     print(filtered_df.iloc[-2][y_stock+'date'])     
-     print(filtered_df.iloc[-1][y_stock+'date'])
+     
+     print("train start date",filtered_df.iloc[0][y_stock+'date'])
+     #print(filtered_df[features_remain][0:1])
+     print("train end date",filtered_df.iloc[-2][y_stock+'date'])     
+     #print(filtered_df[features_remain][-2:-1])
+     print("test start date",filtered_df.iloc[-1][y_stock+'date'])
+     #print(filtered_df[features_remain][-1:])
+
 
      cur_price=filtered_df.iloc[-2][y_stock+'close']
 
      for target in train_targets:
             
-          print("------------------------------ new training and test --------------------------------")
+          print("------------------------------  "+ str(target)+" day new training and test --------------------------------")
           print(str(target)+" day train predict #################")
           train_y = train[y_stock+"gain"+str(target)]
           test_y  = test[y_stock+"gain"+str(target)]
@@ -144,7 +151,6 @@ for date in range(regress_start_date,df_org.shape[0],1):
           
                print("------------ switch model ------------")
                print(model_name[i])
-               
                model.fit(train_x,train_y)
                predictions = model.predict(test_x)
                print("trainning error")
@@ -160,6 +166,7 @@ for date in range(regress_start_date,df_org.shape[0],1):
                print(filtered_df[features_x][-1:].shape)
                print(filtered_df[-1:][y_stock+'date'])
                if(sel_model==1):
+                    print(filtered_df[features_remain][-1:])
                     price=model.predict(filtered_df[features_x][-1:])
                     print("predict value")
                     print(price)
