@@ -93,7 +93,7 @@ for target in train_targets:
             with open('./model_save/'+str(model_name[i])+str(target)+'_model.pkl','wb') as f:
                    pickle.dump(model, f)
             print("------ test latest day ------")
-            print(df_org[features_x][-1:].shape)
+            print(df_org[features_x][-1:])
             price=model.predict(df_org[features_x][-1:])
             res_df.loc[str(model_name[i]),str(target)+' pred']  =price
             res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)
