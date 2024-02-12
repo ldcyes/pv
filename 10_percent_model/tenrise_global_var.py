@@ -39,10 +39,10 @@ features = ["7 day up","7 day down","price/up day","price/mid day","price/low da
             'near5m_open','near5m_close','near5m_high','near5m_low','near5m_volume'
        ]
 
-train = 1
+train = 0
 regress_start_date = 1500 # at lest 1000 days data 5 years
 train_start_date = '20120617'
 train_end_date   = '20231220'
-test_start_date  = '20140618'
-test_end_date    = '20180330'
+test_start_date  = '20200618'
+test_end_date    = '20240210'
 test_size = 0.3 # train ratio

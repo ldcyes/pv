@@ -29,7 +29,6 @@ for feature in features:
        features_x.append(feature)
        features_remain.append(feature)
 
-
 print("orginal data shape")
 print(df_org.shape)
 filtered_df = df_org[features_remain][0:-1]
@@ -77,7 +76,7 @@ for target in train_targets:
        print("test data shape")
        print(train_x.shape)
 
-       print("------------------------------ "+ str(target)+ "day new training and test --------------------------------")
+       print("------------------------------ "+ str(target)+ " day new training and test --------------------------------")
 
        i=0
        confidence=[]

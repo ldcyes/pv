@@ -87,7 +87,7 @@ position_list =[]
 free_list = []
 
 # increment the data for trainning and inference with new trainning data
-first_price=df_org[y_stock+'close'][0]
+is_first_price = 1
 print(regress_start_date,df_org.shape[0])
 for date in range(regress_start_date,df_org.shape[0],1):
 
@@ -134,6 +134,9 @@ for date in range(regress_start_date,df_org.shape[0],1):
 
 
      cur_price=filtered_df.iloc[-2][y_stock+'close']
+     if(is_first_price):
+          first_price = cur_price
+          is_first_price = 0
 
      for target in train_targets:
             
@@ -210,7 +213,7 @@ print("------=====------")
 print("valid days: ",len(profile))
 print("predict: ",target,'days')
 print("max drawdown: ",calculate_max_drawdown(pd.Series(profile)))
-draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/"+str(target)+'.jpg')
+draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/"+str(target)+'regression_with_train.jpg')
 print("final value :", cur_free+cur_position*cur_price)
 print("win rate :", (cur_free+cur_position*cur_price)/gold_list[-1])
     

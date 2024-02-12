@@ -7,7 +7,7 @@ import talib as ta
 import csv
 from datetime import datetime
 
-from global_var import *
+from tenrise_global_var import *
 
 current_date = datetime.now()
 formatted_date = current_date.strftime('%Y%m%d')
