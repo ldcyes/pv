@@ -147,27 +147,27 @@ def build_frame(stock_keys,start_date,end_date):
                         table.loc[df[key,'day']['日期'][day],str(key)+'near5m_low']    = df[key,'day']['收盘'][day]/df[key,'month']['最低'][month_index-5]
                         table.loc[df[key,'day']['日期'][day],str(key)+'near5m_volume'] = df[key,'day']['成交量'][day]/df[key,'month']['成交量'][month_index-5]
 
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/up day']    = df[key,'day']['收盘'][day]/df[key,'day']['upper'][day]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/mid day']   = df[key,'day']['收盘'][day]/df[key,'day']['middle'][day]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/low day']   = df[key,'day']['收盘'][day]/df[key,'day']['lower'][day]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/up week']   = df[key,'day']['收盘'][day]/df[key,'week']['upper'][week_index-1]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/mid week']  = df[key,'day']['收盘'][day]/df[key,'week']['middle'][week_index-1]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/low week']  = df[key,'day']['收盘'][day]/df[key,'week']['lower'][week_index-1]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/up month']  = df[key,'day']['收盘'][day]/df[key,'month']['upper'][month_index-1]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/mid month'] = df[key,'day']['收盘'][day]/df[key,'month']['middle'][month_index-1]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/low month'] = df[key,'day']['收盘'][day]/df[key,'month']['lower'][month_index-1]
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/20high']    = df[key,'day']['收盘'][day]/get_near_high(df,key,day,20)
-                        table.loc[df[key,'day']['日期'][day],str(key)+'price/20low']     = df[key,'day']['收盘'][day]/get_near_low(df,key,day,20)
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_up_day']    = df[key,'day']['收盘'][day]/df[key,'day']['upper'][day]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_mid_day']   = df[key,'day']['收盘'][day]/df[key,'day']['middle'][day]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_low_day']   = df[key,'day']['收盘'][day]/df[key,'day']['lower'][day]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_up_week']   = df[key,'day']['收盘'][day]/df[key,'week']['upper'][week_index-1]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_mid_week']  = df[key,'day']['收盘'][day]/df[key,'week']['middle'][week_index-1]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_low_week']  = df[key,'day']['收盘'][day]/df[key,'week']['lower'][week_index-1]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_up_month']  = df[key,'day']['收盘'][day]/df[key,'month']['upper'][month_index-1]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_mid_month'] = df[key,'day']['收盘'][day]/df[key,'month']['middle'][month_index-1]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_low_month'] = df[key,'day']['收盘'][day]/df[key,'month']['lower'][month_index-1]
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_20high']    = df[key,'day']['收盘'][day]/get_near_high(df,key,day,20)
+                        table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_20low']     = df[key,'day']['收盘'][day]/get_near_low(df,key,day,20)
 
                         if(day-7>=0):
-                            table.loc[df[key,'day']['日期'][day],str(key)+'7 day up']   =  int((df[key,'day']['收盘'][day]>df[key,'day']['开盘'][day]) and
+                            table.loc[df[key,'day']['日期'][day],str(key)+'7dayup']   =  int((df[key,'day']['收盘'][day]>df[key,'day']['开盘'][day]) and
                                                                         (df[key,'day']['收盘'][day-1]>df[key,'day']['开盘'][day-1]) and
                                                                         (df[key,'day']['收盘'][day-2]>df[key,'day']['开盘'][day-2]) and
                                                                         (df[key,'day']['收盘'][day-3]>df[key,'day']['开盘'][day-3]) and
                                                                         (df[key,'day']['收盘'][day-4]>df[key,'day']['开盘'][day-4]) and
                                                                         (df[key,'day']['收盘'][day-5]>df[key,'day']['开盘'][day-5]) and
                                                                         (df[key,'day']['收盘'][day-6]>df[key,'day']['开盘'][day-6]))
-                            table.loc[df[key,'day']['日期'][day],str(key)+'7 day down']   =  int((df[key,'day']['收盘'][day]<df[key,'day']['开盘'][day]) and
+                            table.loc[df[key,'day']['日期'][day],str(key)+'7daydown']   =  int((df[key,'day']['收盘'][day]<df[key,'day']['开盘'][day]) and
                                                                         (df[key,'day']['收盘'][day-1]<df[key,'day']['开盘'][day-1]) and
                                                                         (df[key,'day']['收盘'][day-2]<df[key,'day']['开盘'][day-2]) and
                                                                         (df[key,'day']['收盘'][day-3]<df[key,'day']['开盘'][day-3]) and

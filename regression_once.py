@@ -1,4 +1,6 @@
 from math import floor
+from sklearnex import patch_sklearn,unpatch_sklearn
+patch_sklearn()
 import pandas as pd
 import numpy as np
 import pickle
@@ -95,7 +97,7 @@ for test_target in test_targets:
             predict_avg = 0
             for model_n in test_model_name:
                 model = pickle.load(open('./model_save/'+str(model_n)+str(test_target)+'_model.pkl','rb'))
-                predict_result = model.predict(df_org[day:day+1][features_x])
+                predict_result = model.predict(df_org[day:day+1][features_x].values)
                 predict_avg = predict_result+predict_avg
 
             buy_condition  = (predict_avg/(len(test_model_name))) >= 1.05

@@ -1,3 +1,5 @@
+from sklearnex import patch_sklearn,unpatch_sklearn
+patch_sklearn()
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
@@ -9,7 +11,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import Ridge
 from xgboost import XGBRegressor
-from sklearn.neural_network import MLPRegressor  
+from sklearn.neural_network import MLPRegressor
 import pandas as pd
 import numpy as np
 import pickle
@@ -137,6 +139,7 @@ for date in range(regress_start_date,df_org.shape[0],1):
      if(is_first_price):
           first_price = cur_price
           is_first_price = 0
+          start_position = int(start_value/cur_price)
 
      for target in train_targets:
             
@@ -154,8 +157,8 @@ for date in range(regress_start_date,df_org.shape[0],1):
           
                print("------------ switch model ------------")
                print(model_name[i])
-               model.fit(train_x,train_y)
-               predictions = model.predict(test_x)
+               model.fit(train_x.values,train_y)
+               predictions = model.predict(test_x.values)
                print("trainning error")
                print(mean_squared_error(test_y, predictions))
                # the mimimal loss predict will be recorded
@@ -170,7 +173,7 @@ for date in range(regress_start_date,df_org.shape[0],1):
                print(filtered_df[-1:][y_stock+'date'])
                if(sel_model==1):
                     print(filtered_df[features_remain][-1:])
-                    price=model.predict(filtered_df[features_x][-1:])
+                    price=model.predict(filtered_df[features_x][-1:].values)
                     print("predict value")
                     print(price)
                     price_list.append(price.tolist()[0])

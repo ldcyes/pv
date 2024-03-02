@@ -1,3 +1,5 @@
+from sklearnex import patch_sklearn,unpatch_sklearn
+patch_sklearn()
 from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
@@ -14,6 +16,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from global_var import *
+
 
 def train_once():
        df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
@@ -43,8 +46,8 @@ def train_once():
        print("------------------=== split train and testset ===------------------")
        train,test = train_test_split(filtered_df,test_size=test_size,shuffle=True)
 
-       test_x = test[features_x]
-       train_x = train[features_x]
+       test_x = test[features_x].values
+       train_x = train[features_x].values
        print("train data shape")
        print(train[features_remain].shape)
        print("test data shape")
@@ -52,13 +55,14 @@ def train_once():
 
        ss = MinMaxScaler()
        model_list=[DecisionTreeRegressor(),
-                   SVR(kernel='rbf',gamma=0.1,C=1.0),
+                   #SVR(kernel='rbf',gamma=0.1,C=1.0),
                    RandomForestRegressor(),
-                   MLPRegressor(hidden_layer_sizes=(128,512,1024),activation='tanh', solver='adam', alpha=1e-5, random_state=1),
-                   SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
+                   #MLPRegressor(hidden_layer_sizes=(128,512,1024),activation='tanh', solver='adam', alpha=1e-5, random_state=1),
+                   #SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
                    XGBRegressor(objective='reg:squarederror')]
 
-       model_name=['decision tree','SVM','RandomForest','MLP','SGD',
+       model_name=['decision tree',#'SVM',
+                   'RandomForest',#'MLP','SGD',
                    'XGboost']
        i=0
        print("------------------=== start trainning ===------------------")
@@ -87,6 +91,8 @@ def train_once():
               
                    print("------ switch model ------")
                    print(model_name[i])
+                   csv_df = pd.DataFrame(data=train_x,index=None)
+                   csv_df.to_csv("./stock_data/"+str(model_name[i])+str(target)+'_train_x.csv',index=False)
                    model.fit(train_x,train_y)
                    predictions = model.predict(test_x)
                    print("trainning error")
@@ -95,7 +101,7 @@ def train_once():
                           pickle.dump(model, f)
                    print("------ test latest day ------")
                    print(df_org[features_x][-1:])
-                   price=model.predict(df_org[features_x][-1:])
+                   price=model.predict(df_org[features_x][-1:].values)
                    res_df.loc[str(model_name[i]),str(target)+' pred']  =price
                    res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)
                    print("predict value")

@@ -1,9 +1,9 @@
 # trainning and test following stocks
 x_stocks=['SOXX','QQQ']
 y_stock ='SOXX'
-train_targets = [3,5,10,20]
+train_targets = [10]
 data_targets = ['3','5','10','20']
-test_targets = ['20']
+test_targets = ['3','5','10','20']
 #buy_position = [10,20,30,40]
 #sell_position = [10,20,30,40]
 # build following stocks
@@ -19,8 +19,8 @@ test_model_name=[
 
 gen_inc10_flag =1
 
-features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week",
-            "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low",
+features = ["7dayup","7daydown","price_vs_up_day","price_vs_mid_day","price_vs_low_day","price_vs_up_week","price_vs_mid_week",
+            "price_vs_low_week","price_vs_up_month","price_vs_mid_month","price_vs_low_month","price_vs_20high","price_vs_20low",
             'near1d_open','near1d_close','near1d_high','near1d_low','near1d_volume',
             'near2d_open','near2d_close','near2d_high','near2d_low','near2d_volume',
             'near3d_open','near3d_close','near3d_high','near3d_low','near3d_volume',
