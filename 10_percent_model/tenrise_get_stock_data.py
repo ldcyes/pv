@@ -165,6 +165,7 @@ def build_frame(stock_keys,start_date,end_date):
                         table.loc[table_row_index,'near5m_high']   = data_norm(df[key,'day']['收盘'][day],df[key,'month']['最高'][month_index-5])
                         table.loc[table_row_index,'near5m_low']    = data_norm(df[key,'day']['收盘'][day],df[key,'month']['最低'][month_index-5])
                         table.loc[table_row_index,'near5m_volume'] = data_norm(df[key,'day']['成交量'][day],df[key,'month']['成交量'][month_index-5])
+                        
                         table.loc[table_row_index,'price/up day']    = data_norm(df[key,'day']['收盘'][day],df[key,'day']['upper'][day])
                         table.loc[table_row_index,'price/mid day']   = data_norm(df[key,'day']['收盘'][day],df[key,'day']['middle'][day])
                         table.loc[table_row_index,'price/low day']   = data_norm(df[key,'day']['收盘'][day],df[key,'day']['lower'][day])

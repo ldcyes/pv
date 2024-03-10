@@ -10,9 +10,19 @@ TODO
 
 2. 打板
 找到所有10%的股票
-
+预测明天的结果
 
 3. 遍历实验
 
 
 EXPERIMENT
+1 start 2014-02-03
+  end   2024-01-11
+valid days:  1420
+predict:  20 days
+max drawdown:  -0.14322627293024798
+final value : 962779.0899999999
+win rate : 0.9016776561778415
+
+2 检查10rise 数据，train 
+  test为什么没有2024年的数据

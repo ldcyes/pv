@@ -1,4 +1,6 @@
 from sklearn import svm
+from sklearnex import patch_sklearn,unpatch_sklearn
+patch_sklearn()
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVR
@@ -45,7 +47,7 @@ ss = MinMaxScaler()
 
 model_list=[DecisionTreeRegressor(),
             SVR(kernel='rbf',gamma=0.1,C=1.0),
-            RandomForestRegressor(),
+            RandomForestRegressor(n_jobs=-1),
             MLPRegressor(hidden_layer_sizes=(128,512,1024),activation='tanh', solver='adam', alpha=1e-5, random_state=1),
             SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
             XGBRegressor(objective='reg:squarederror')]
@@ -72,9 +74,9 @@ for target in train_targets:
        train_y = train["gain"+str(target)]
        test_y  = test["gain"+str(target)]
        print("train data shape")
-       print(test_x.shape)
-       print("test data shape")
        print(train_x.shape)
+       print("test data shape")
+       print(test_x.shape)
 
        print("------------------------------ "+ str(target)+ " day new training and test --------------------------------")
 
@@ -87,8 +89,8 @@ for target in train_targets:
        
               print("------ switch model ------")
               print(model_name[i])
-              model.fit(train_x,train_y)
-              predictions = model.predict(test_x)
+              model.fit(train_x.values,train_y)
+              predictions = model.predict(test_x.values)
               print("trainning error")
               print(mean_squared_error(test_y, predictions))
               res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)

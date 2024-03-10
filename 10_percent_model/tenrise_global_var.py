@@ -18,8 +18,12 @@ test_model_name=[
 ]
 
 gen_inc10_flag =1
-features = ["7 day up","7 day down","price/up day","price/mid day","price/low day","price/up week","price/mid week",
-            "price/low week","price/up month","price/mid month","price/low month","price/20high","price/20low",
+features = ["7 day up","7 day down",
+            "price/up day","price/mid day","price/low day",
+            "price/up week","price/mid week","price/low week",
+            "price/up month","price/mid month","price/low month",
+            "price/20high","price/20low",
+
             'near1d_open','near1d_close','near1d_high','near1d_low','near1d_volume',
             'near2d_open','near2d_close','near2d_high','near2d_low','near2d_volume',
             'near3d_open','near3d_close','near3d_high','near3d_low','near3d_volume',
@@ -43,6 +47,6 @@ train = 0
 regress_start_date = 1500 # at lest 1000 days data 5 years
 train_start_date = '20120617'
 train_end_date   = '20231220'
-test_start_date  = '20200618'
-test_end_date    = '20240210'
-test_size = 0.3 # train ratio
+test_start_date  = '20200118'
+test_end_date    = '20240310'
+test_size = 0.2 # train ratio

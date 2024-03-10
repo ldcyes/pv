@@ -115,10 +115,10 @@ for date in range(regress_start_date,df_org.shape[0],1):
      ss = MinMaxScaler()
      model_list=[#DecisionTreeRegressor(),
                  #SVR(kernel='rbf',gamma=0.1,C=1.0),
-                 RandomForestRegressor(),
+                 RandomForestRegressor(n_jobs=-1),
                  #MLPRegressor(hidden_layer_sizes=(128,512,1024),activation='tanh', solver='adam', alpha=1e-5, random_state=1),
                  #SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
-                 XGBRegressor(objective='reg:squarederror')]
+                 XGBRegressor(n_jobs=-1)]
      
      model_name=[#'decision tree',
           #'SVM',
@@ -182,8 +182,8 @@ for date in range(regress_start_date,df_org.shape[0],1):
           buy_condition  = price >= 1.05
           sell_condition = price <= 0.95
           # how much to buy and sell
-          buy_position = int(cur_free/cur_price*0.25)
-          sell_position = int(cur_position*0.25)
+          buy_position = int(cur_free/cur_price*1)
+          sell_position = int(cur_position*1)
 
           if(buy_condition):
                if((buy_position * cur_price) < cur_free ):
