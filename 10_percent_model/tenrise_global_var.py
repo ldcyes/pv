@@ -3,7 +3,7 @@ x_stocks=['SOXX','QQQ']
 y_stock ='SOXX'
 train_targets = [1,3,5,10,20]
 data_targets = [1,3,5,10,20]
-test_targets = ['20']
+test_targets = ['5']
 #buy_position = [10,20,30,40]
 #sell_position = [10,20,30,40]
 # build following stocks

@@ -77,8 +77,7 @@ def build_frame(stock_keys,start_date,end_date):
             for day in range(len(df[key,'day'])):
                 
                 # note this should >10 percent rise
-                record_condition = df[key,'day']['涨跌幅'][day] >= 10.0 and week_index-1>=0 and month_index-1>=0
-
+                record_condition = df[key,'day']['涨跌幅'][day] >= 9.8 and week_index-1>=0 and month_index-1>=0 and df[key,'day']['涨跌幅'][day] <= 10.2
                 if(record_condition):
                     table.loc[table_row_index,'date']   = df[key,'day']['日期'][day]
                     # the currentable_row_i

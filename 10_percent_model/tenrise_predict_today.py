@@ -32,7 +32,7 @@ def predict_now():
     print(filtered_df['date'][-1:])
     print(filtered_df['key'][-1:])
 
-    test_date='2024-01'#str(formatted_date)
+    test_date='2024-03'#str(formatted_date)
     res_df=pd.DataFrame()
     import copy
 
@@ -41,7 +41,7 @@ def predict_now():
             print(model_n)
             model = pickle.load(open('./model_save/'+str(model_n)+str(test_target)+'_10rise_model.pkl','rb'))
             test_df=filtered_df#filtered_df[filtered_df['date']==test_date]
-            res_df=copy.deepcopy(test_df)
+            res_df=copy.deepcopy(test_df[['key','date','price/20low']])
             #print(test_df)
             #print(filtered_df[filtered_df['date']==test_date].shape)
             print(test_df[features_x].shape)
@@ -52,6 +52,7 @@ def predict_now():
             #print(res_df.index)
             i=0
             res_df=res_df[res_df['date'].astype(str).str.contains(test_date)]
+            res_df=res_df.head(20)
             for index in res_df.index:
                 i=i+1
                 if(i>30):

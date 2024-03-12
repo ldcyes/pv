@@ -4,11 +4,14 @@
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
 from tenrise_get_stock_data import *
 import pandas as pd
 from tenrise_global_var import *
 from tenrise_get_stock_data import *
 from tenrise_predict_today import *
+import matplotlib.pyplot as plt
+from io import BytesIO
 
 def send_email(subject, body):
     # 设置邮箱登录信息
@@ -22,6 +25,10 @@ def send_email(subject, body):
     msg['To'] = email_receiver
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'html', 'utf-8'))
+    with open('dataframe_plot.jpg', 'rb') as f:
+        img = MIMEImage(f.read())
+        img.add_header('Content-Disposition', 'attachment', filename='dataframe_plot.jpg')
+        msg.attach(img)
 
     # 发送邮件
     try:
@@ -54,5 +61,10 @@ if __name__ == "__main__":
     csv_df.to_csv("./stock_data/"+file_name)
     res = pd.DataFrame()
     res = predict_now()
+    plt.figure()
+    res.plot(kind='bar')
+    
+    plt.savefig('dataframe_plot.jpg')
+    plt.close()
     html_content=res.to_html(index=True,header=True)
     send_email("10 rise stock predictor", html_content)
