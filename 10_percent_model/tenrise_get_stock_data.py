@@ -9,23 +9,12 @@ from datetime import datetime
 
 from tenrise_global_var import *
 
-current_date = datetime.now()
-formatted_date = current_date.strftime('%Y%m%d')
-
 def data_norm(a,b):
     if(b==0):
         return np.inf
     else:
         return a/b
 
-if(train):
-    start_date = train_start_date
-    end_date   = str(formatted_date)
-    file_name = "10rise_TRAIN_DATA.csv"
-else:
-    start_date = test_start_date
-    end_date   = str(formatted_date)
-    file_name = "10rise_TEST_DATA.csv"
 
 def get_near_high(df,key,day,day_range):
     cur_high=df[key,'day']['收盘'][day]
@@ -61,6 +50,7 @@ def build_frame(stock_keys,start_date,end_date):
     df = {}
     table = pd.DataFrame()
     table_row_index = 0
+
     for key in stock_keys:
             
             df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101) # day
@@ -219,7 +209,7 @@ def build_frame(stock_keys,start_date,end_date):
                         month_index +=1# next_month_index
     return table
                                                    
-color=[]
+#color=[]
 '''
 key = 'SOXX'
 for i in range(len(df[key,'day']['收盘'])):
@@ -236,18 +226,33 @@ x = np.arange(len(df[key,'day']['收盘']))
 #plt.scatter(x,df[key,'day']['收盘'],color=color)
 #plt.show()
 '''
-eft_id_list = [
-    #'399006',
-    #'399001',
-    '000905']
-stock_keys=None
+if __name__ == "__main__":
+    current_date = datetime.now()
+    formatted_date = current_date.strftime('%Y%m%d')
+    if(train):
+        start_date = train_start_date
+        end_date   = str(formatted_date)
+        file_name = "10rise_TRAIN_DATA.csv"
+    else:
+        start_date = test_start_date
+        end_date   = str(formatted_date)
+        file_name = "10rise_TEST_DATA.csv"
+    eft_id_list = [
+        #'399006',
+        #'399001',
+        '399006',
+        '399001',
+        '399005',
+        '000905',
+        '000905']
+    stock_keys=pd.DataFrame()
 
-for id in eft_id_list:
-    stocks=ef.stock.get_members(id)# CYB300
-    stock_keys=pd.concat([stock_keys,stocks['股票名称']])
-
-print("the stock total numbers ",stock_keys.shape)
-print(stock_keys)
-table=build_frame(list(stock_keys),start_date,end_date)
-csv_df = pd.DataFrame(data=table,index=None)
-csv_df.to_csv("./stock_data/"+file_name)
+    for id in eft_id_list:
+        stocks=ef.stock.get_members(id)# CYB300
+        stock_keys=pd.concat([stock_keys,stocks['股票名称']])
+    stock_keys=stock_keys.drop_duplicates(inplace=False)
+    print("the stock total numbers ",stock_keys.shape)
+    print(stock_keys)
+    table=build_frame(list(stock_keys.values),start_date,end_date)
+    csv_df = pd.DataFrame(data=table,index=None)
+    csv_df.to_csv("./stock_data/"+file_name)

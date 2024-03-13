@@ -194,6 +194,7 @@ def build_frame(stock_keys,start_date,end_date):
 
     return table
 
-table= build_frame(stock_keys,start_date,end_date)
-csv_df = pd.DataFrame(data=table,index=None)
-csv_df.to_csv("./stock_data/"+file_name)
+if __name__ == "__main__":
+    table= build_frame(stock_keys,start_date,end_date)
+    csv_df = pd.DataFrame(data=table,index=None)
+    csv_df.to_csv("./stock_data/"+file_name)

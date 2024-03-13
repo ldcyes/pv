@@ -7,7 +7,7 @@ test_targets = ['5']
 #buy_position = [10,20,30,40]
 #sell_position = [10,20,30,40]
 # build following stocks
-stock_keys=['QQQ','SOXX','NVDA']#'TSLA']#'中芯国际']
+
 test_model_name=[
 #'decision tree',
 #'SVM',
@@ -43,10 +43,10 @@ features = ["7 day up","7 day down",
             'near5m_open','near5m_close','near5m_high','near5m_low','near5m_volume'
        ]
 
-train = 0
+train = 1
 regress_start_date = 1500 # at lest 1000 days data 5 years
-train_start_date = '20120617'
-train_end_date   = '20231220'
+train_start_date = '20100617'
+train_end_date   = '20240312'
 test_start_date  = '20200118'
 test_end_date    = '20240310'
 test_size = 0.2 # train ratio
