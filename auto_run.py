@@ -36,7 +36,18 @@ def send_email(subject, body):
         print(e)
 
 if __name__ == "__main__":
-    table= build_frame(stock_keys,start_date,end_date)
+    current_date = datetime.now()
+    formatted_date = current_date.strftime('%Y%m%d')
+
+    if(train):
+        start_date = train_start_date
+        end_date   = str(formatted_date)
+        file_name = "STOCK_TRAIN_DATA.csv"
+    else:
+        start_date = test_start_date
+        end_date   = str(formatted_date)
+        file_name = "STOCK_TEST_DATA.csv"
+    table= build_frame(x_stocks,start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
     csv_df.to_csv("./stock_data/"+file_name)
     res = train_once()

@@ -1,13 +1,12 @@
 # trainning and test following stocks
-x_stocks=['SOXX','QQQ']#'NVDA','TSM']
-y_stock ='SOXX'
+x_stocks=['QQQ','NVDA','TSM']
+y_stock ='NVDA'
 train_targets = [3,5,10,20]
 data_targets = ['3','5','10','20']
 test_targets = ['3','5','10','20']
 #buy_position = [10,20,30,40]
 #sell_position = [10,20,30,40]
 # build following stocks
-stock_keys=['QQQ','SOXX']#'NVDA','TSM']#'TSLA']#'中芯国际']
 test_model_name=[
 #'decision tree',
 #'SVM',
@@ -41,9 +40,10 @@ features = ["7dayup","7daydown","price_vs_up_day","price_vs_mid_day","price_vs_l
        ]
 
 train = 1
+is_akshare = 0
 regress_start_date = 1500 # at lest 1000 days data 5 years
 train_start_date = '20120617'
-train_end_date   = '20231220'
+train_end_date   = '20240306'
 test_start_date  = '20140618'
 test_end_date    = '20180330'
 test_size = 0.2 # train ratio

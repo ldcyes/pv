@@ -7,17 +7,7 @@ import talib as ta
 import csv
 from datetime import datetime
 from global_var import *
-current_date = datetime.now()
-formatted_date = current_date.strftime('%Y%m%d')
-
-if(train):
-    start_date = train_start_date
-    end_date   = str(formatted_date)
-    file_name = "STOCK_TRAIN_DATA.csv"
-else:
-    start_date = test_start_date
-    end_date   = str(formatted_date)
-    file_name = "STOCK_TEST_DATA.csv"
+import akshare as ak
 
 def get_near_high(df,key,day,day_range):
     cur_high=df[key,'day']['收盘'][day]
@@ -45,13 +35,62 @@ def get_bolls(dw):
     )
     return dw
 
+def ak_rename(df):
+    df.rename(columns={'date':'日期','open':'开盘','high':'最高','low':'最低','close':'收盘','volume':'成交量'}, inplace=True)
+    return df
+
+# data from sina only have daily data
+def akshare_data(key):
+
+    stock_us_daily_df = ak.stock_us_daily(symbol=key, adjust="qfq")
+    stock_us_daily_df['date'] = pd.to_datetime(stock_us_daily_df['date'])
+    stock_us_daily_df.set_index('date', inplace=True)
+
+    # 计算月线数据
+    monthly_data = stock_us_daily_df.resample('M').agg({
+        'open': 'first',  # 每月第一天的开盘价
+        'high': 'max',    # 每月的最高价
+        'low': 'min',     # 每月的最低价
+        'close': 'last',  # 每月最后一天的收盘价
+        'volume': 'sum'   # 每月的成交量总和
+    })
+
+    # 计算周线数据
+    weekly_data = stock_us_daily_df.resample('W').agg({
+        'open': 'first',  # 每周第一天的开盘价
+        'high': 'max',    # 每周的最高价
+        'low': 'min',     # 每周的最低价
+        'close': 'last',  # 每周最后一天的收盘价
+        'volume': 'sum'   # 每周的成交量总和
+    })
+
+    # 重置索引，使日期变回普通列
+    monthly_data.reset_index(inplace=True)
+    weekly_data.reset_index(inplace=True)
+    stock_us_daily_df.reset_index(inplace=True)
+    
+    stock_us_daily_df=ak_rename(stock_us_daily_df)
+    weekly_data=ak_rename(weekly_data)
+    monthly_data=ak_rename(monthly_data)
+
+    stock_us_daily_df.to_csv("./stock_data/"+key+"_day.csv")
+    weekly_data.to_csv("./stock_data/"+key+"_week.csv")
+    monthly_data.to_csv("./stock_data/"+key+"_month.csv")
+
+    return stock_us_daily_df,weekly_data,monthly_data
+
 def build_frame(stock_keys,start_date,end_date):
     df = {}
     table = pd.DataFrame()
     for key in stock_keys:
-            df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101)# day
-            df[key,'week']  = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=102)# week
-            df[key,'month'] = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=103)# month
+            
+            if(is_akshare):
+                df[key,'day'],df[key,'week'],df[key,'month'] = akshare_data(key)
+            else:
+                df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101)# day
+                df[key,'week']  = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=102)# week
+                df[key,'month'] = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=103)# month
+
             df[key,'day']   = get_bolls(df[key,'day'])
             df[key,'week']  = get_bolls(df[key,'week'])
             df[key,'month'] = get_bolls(df[key,'month'])
@@ -181,20 +220,36 @@ def build_frame(stock_keys,start_date,end_date):
                         if(day+train_targets[2]<len(df[key,'day'])):
                             table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[2])] = df[key,'day']['收盘'][day+train_targets[2]]/df[key,'day']['收盘'][day]
                         if(day+train_targets[3]<len(df[key,'day'])):
-                            table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[3])] = df[key,'day']['收盘'][day+train_targets[3]]/df[key,'day']['收盘'][day]  
-                # example week = 2012-7-12 day = 2012-7-11 week
-                if(df[key,'week']['日期'][week_index]==df[key,'day']['日期'][day]):
-                    if((week_index+1)<len(df[key,'week'])):
-                        week_index +=1# next_week_index
-
-                #print(df[key,'month']['日期'][month_index])
-                if(df[key,'month']['日期'][month_index]==df[key,'day']['日期'][day]):
-                    if((month_index+1)<len(df[key,'month'])):
-                        month_index +=1# next_month_index
+                            table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[3])] = df[key,'day']['收盘'][day+train_targets[3]]/df[key,'day']['收盘'][day]
+                if(is_akshare):
+                    if(df[key,'week']['日期'][week_index]<=df[key,'day']['日期'][day]):
+                        if((week_index+1)<len(df[key,'week'])):
+                            week_index +=1# next_week_index
+                    if(df[key,'month']['日期'][month_index]<=df[key,'day']['日期'][day]):
+                        if((month_index+1)<len(df[key,'month'])):
+                            month_index +=1# next_month_index
+                else:
+                    if(df[key,'week']['日期'][week_index]==df[key,'day']['日期'][day]):
+                        if((week_index+1)<len(df[key,'week'])):
+                            week_index +=1# next_week_index
+                    if(df[key,'month']['日期'][month_index]==df[key,'day']['日期'][day]):
+                        if((month_index+1)<len(df[key,'month'])):
+                            month_index +=1# next_month_index
 
     return table
 
 if __name__ == "__main__":
-    table= build_frame(stock_keys,start_date,end_date)
+    current_date = datetime.now()
+    formatted_date = current_date.strftime('%Y%m%d')
+
+    if(train):
+        start_date = train_start_date
+        end_date   = str(formatted_date)
+        file_name = "STOCK_TRAIN_DATA.csv"
+    else:
+        start_date = test_start_date
+        end_date   = str(formatted_date)
+        file_name = "STOCK_TEST_DATA.csv"
+    table= build_frame(x_stocks,start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
     csv_df.to_csv("./stock_data/"+file_name)
