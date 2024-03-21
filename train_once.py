@@ -113,12 +113,5 @@ def train_once():
 
        return res_df
 
-
-
-
-
-
-
-
 if __name__ == "__main__":
        train_once()

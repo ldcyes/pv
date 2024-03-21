@@ -171,7 +171,7 @@ def get_xueqiu_stock(symbol,begin,period,count,indicator):
 	df = pd.DataFrame(item_data, columns=column_names)
 	df['timestamp']=df['timestamp'].apply(stp_t)
 	df.rename(columns={'timestamp':'date'},inplace=True)
-	df.to_csv("stock_data/SOXX_XUEQIU.csv")
+	#df.to_csv("stock_data/SOXX_XUEQIU.csv")
 	return df
 	
 #get_xueqiu_stock(symbol='SOXX',begin='2024-03-21 00:00:00',period='day',count='200',indicator='kline')

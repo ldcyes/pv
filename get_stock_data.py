@@ -9,6 +9,7 @@ from datetime import datetime
 from global_var import *
 import akshare as ak
 import stock_api
+
 def get_near_high(df,key,day,day_range):
     cur_high=df[key,'day']['收盘'][day]
     for i in range(day_range):
@@ -140,7 +141,15 @@ def build_frame(stock_keys,start_date,end_date):
             week_index  = 0
             month_index = 0
             for day in range(len(df[key,'day'])):
-
+                if(is_xueqiu):
+                    if(df[key,'week']['日期'][week_index]<df[key,'day']['日期'][day]):
+                        # 2-25,3-3,3-10
+                        # 3/1, 3/4-8,3/11
+                        if((week_index+1)<len(df[key,'week'])):
+                            week_index +=1# next_week_index
+                    if(df[key,'month']['日期'][month_index]<df[key,'day']['日期'][day]):
+                        if((month_index+1)<len(df[key,'month'])):
+                            month_index +=1# next_month_index
                 if(week_index-1>=0 and month_index-1>=0):
                     table.loc[df[key,'day']['日期'][day],str(key)+'date']   = df[key,'day']['日期'][day]
                     # the current week contain no futrue data
@@ -264,12 +273,15 @@ def build_frame(stock_keys,start_date,end_date):
                         if(day+train_targets[3]<len(df[key,'day'])):
                             table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[3])] = df[key,'day']['收盘'][day+train_targets[3]]/df[key,'day']['收盘'][day]
                 if(is_xueqiu):
-                    if(df[key,'week']['日期'][week_index]<=df[key,'day']['日期'][day]):
-                        if((week_index+1)<len(df[key,'week'])):
-                            week_index +=1# next_week_index
-                    if(df[key,'month']['日期'][month_index]<=df[key,'day']['日期'][day]):
-                        if((month_index+1)<len(df[key,'month'])):
-                            month_index +=1# next_month_index
+                    #if(stock_api.timestamp(df[key,'week']['日期'][week_index])<stock_api.timestamp(str(df[key,'day']['日期'][day]))):
+                    #    # 2-25,3-3,3-10
+                    #    # 3/1, 3/4-8,3/11
+                    #    if((week_index+1)<len(df[key,'week'])):
+                    #        week_index +=1# next_week_index
+                    #if(df[key,'month']['日期'][month_index]<=df[key,'day']['日期'][day]):
+                    #    if((month_index+1)<len(df[key,'month'])):
+                    #        month_index +=1# next_month_index
+                    pass
                 else:
                     if(df[key,'week']['日期'][week_index]==df[key,'day']['日期'][day]):
                         if((week_index+1)<len(df[key,'week'])):
@@ -277,7 +289,10 @@ def build_frame(stock_keys,start_date,end_date):
                     if(df[key,'month']['日期'][month_index]==df[key,'day']['日期'][day]):
                         if((month_index+1)<len(df[key,'month'])):
                             month_index +=1# next_month_index
+    table[y_stock+'date'] = pd.to_datetime(table[y_stock+'date'])
 
+    # 按照日期列排序
+    table = table.sort_values(by=y_stock+'date')
     return table
 
 if __name__ == "__main__":
