@@ -40,7 +40,7 @@ features = ["7dayup","7daydown","price_vs_up_day","price_vs_mid_day","price_vs_l
        ]
 
 train = 1
-is_akshare = 0
+is_xueqiu = 0
 regress_start_date = 1500 # at lest 1000 days data 5 years
 train_start_date = '20120617'
 train_end_date   = '20240306'

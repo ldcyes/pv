@@ -8,7 +8,7 @@ import csv
 from datetime import datetime
 from global_var import *
 import akshare as ak
-
+import stock_api
 def get_near_high(df,key,day,day_range):
     cur_high=df[key,'day']['收盘'][day]
     for i in range(day_range):
@@ -79,13 +79,55 @@ def akshare_data(key):
 
     return stock_us_daily_df,weekly_data,monthly_data
 
+def xueqiu_data(key,start_date,count=1000):
+
+    begin = start_date+" 00:00:00"
+    
+    stock_us_daily_df=stock_api.get_xueqiu_stock(symbol=key,begin=begin,period='day',count=count,indicator='kline')
+    
+    stock_us_daily_df['date'] = pd.to_datetime(stock_us_daily_df['date'])
+    stock_us_daily_df.set_index('date', inplace=True)
+
+    # 计算月线数据
+    monthly_data = stock_us_daily_df.resample('M').agg({
+        'open': 'first',  # 每月第一天的开盘价
+        'high': 'max',    # 每月的最高价
+        'low': 'min',     # 每月的最低价
+        'close': 'last',  # 每月最后一天的收盘价
+        'volume': 'sum'   # 每月的成交量总和
+    })
+
+    # 计算周线数据
+    weekly_data = stock_us_daily_df.resample('W').agg({
+        'open': 'first',  # 每周第一天的开盘价
+        'high': 'max',    # 每周的最高价
+        'low': 'min',     # 每周的最低价
+        'close': 'last',  # 每周最后一天的收盘价
+        'volume': 'sum'   # 每周的成交量总和
+    })
+
+    # 重置索引，使日期变回普通列
+    monthly_data.reset_index(inplace=True)
+    weekly_data.reset_index(inplace=True)
+    stock_us_daily_df.reset_index(inplace=True)
+    
+    stock_us_daily_df=ak_rename(stock_us_daily_df)
+    weekly_data=ak_rename(weekly_data)
+    monthly_data=ak_rename(monthly_data)
+
+    stock_us_daily_df.to_csv("./stock_data/"+key+"_day.csv")
+    weekly_data.to_csv("./stock_data/"+key+"_week.csv")
+    monthly_data.to_csv("./stock_data/"+key+"_month.csv")
+
+    return stock_us_daily_df,weekly_data,monthly_data
+
 def build_frame(stock_keys,start_date,end_date):
     df = {}
     table = pd.DataFrame()
     for key in stock_keys:
             
-            if(is_akshare):
-                df[key,'day'],df[key,'week'],df[key,'month'] = akshare_data(key)
+            if(is_xueqiu==1):
+                df[key,'day'],df[key,'week'],df[key,'month'] = xueqiu_data(key,start_date,count=365*14)
             else:
                 df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101)# day
                 df[key,'week']  = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=102)# week
@@ -221,7 +263,7 @@ def build_frame(stock_keys,start_date,end_date):
                             table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[2])] = df[key,'day']['收盘'][day+train_targets[2]]/df[key,'day']['收盘'][day]
                         if(day+train_targets[3]<len(df[key,'day'])):
                             table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[3])] = df[key,'day']['收盘'][day+train_targets[3]]/df[key,'day']['收盘'][day]
-                if(is_akshare):
+                if(is_xueqiu):
                     if(df[key,'week']['日期'][week_index]<=df[key,'day']['日期'][day]):
                         if((week_index+1)<len(df[key,'week'])):
                             week_index +=1# next_week_index
