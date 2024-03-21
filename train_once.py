@@ -37,7 +37,8 @@ def train_once():
        filtered_df = df_org[features_remain][0:-2]
        print("trained feature data shape")
        print(filtered_df.shape)
-       filtered_df= filtered_df.dropna()
+       filtered_df= filtered_df.replace([np.inf, -np.inf], np.nan).dropna()
+
        print("train data drop NA value data shape")
        print(filtered_df.shape)
        print(filtered_df)

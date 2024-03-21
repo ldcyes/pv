@@ -1,6 +1,6 @@
 # trainning and test following stocks
-x_stocks=['QQQ','NVDA','TSM']
-y_stock ='NVDA'
+x_stocks=['QQQ','SOXX']
+y_stock ='SOXX'
 train_targets = [3,5,10,20]
 data_targets = ['3','5','10','20']
 test_targets = ['3','5','10','20']
@@ -40,10 +40,10 @@ features = ["7dayup","7daydown","price_vs_up_day","price_vs_mid_day","price_vs_l
        ]
 
 train = 1
-is_xueqiu = 0
+is_xueqiu = 1
 regress_start_date = 1500 # at lest 1000 days data 5 years
 train_start_date = '20120617'
-train_end_date   = '20240306'
+train_end_date   = '2024-03-21'
 test_start_date  = '20140618'
 test_end_date    = '20180330'
 test_size = 0.2 # train ratio

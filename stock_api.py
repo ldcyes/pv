@@ -158,7 +158,7 @@ def get_xueqiu_stock(symbol,begin,period,count,indicator):
 		'Origin':'https://xueqiu.com',
 		'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
 	}
-	req_str = 'https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol='+str(symbol)+'&begin='+str(begin)+'&period='+str(period)+'&type='+str(type)+'&count='+str(count)+'&indicator='+str(indicator)
+	req_str = 'https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol='+str(symbol)+'&begin='+str(begin)+'&period='+str(period)+'&type='+str(type)+'&count='+str(count)+'&indicator=kline,pe,pb,ps,pcf,market_capital,agt,ggt,balance'
 	response =requests.get(req_str,headers=headers)
 	#response=requests.get('https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol=SOXX&begin=1664553600000&period=day&type=before&count=-8&indicator=kline',headers=headers)
 	data = json.loads(response.text)
@@ -171,7 +171,7 @@ def get_xueqiu_stock(symbol,begin,period,count,indicator):
 	df = pd.DataFrame(item_data, columns=column_names)
 	df['timestamp']=df['timestamp'].apply(stp_t)
 	df.rename(columns={'timestamp':'date'},inplace=True)
-        
+	df.to_csv("stock_data/SOXX_XUEQIU.csv")
 	return df
 	
 #get_xueqiu_stock(symbol='SOXX',begin='2024-03-21 00:00:00',period='day',count='200',indicator='kline')

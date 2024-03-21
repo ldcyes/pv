@@ -127,7 +127,7 @@ def build_frame(stock_keys,start_date,end_date):
     for key in stock_keys:
             
             if(is_xueqiu==1):
-                df[key,'day'],df[key,'week'],df[key,'month'] = xueqiu_data(key,start_date,count=365*14)
+                df[key,'day'],df[key,'week'],df[key,'month'] = xueqiu_data(key,end_date,count=365*14)
             else:
                 df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101)# day
                 df[key,'week']  = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=102)# week
@@ -282,7 +282,7 @@ def build_frame(stock_keys,start_date,end_date):
 
 if __name__ == "__main__":
     current_date = datetime.now()
-    formatted_date = current_date.strftime('%Y%m%d')
+    formatted_date = current_date.strftime('%Y-%m-%d')
 
     if(train):
         start_date = train_start_date
