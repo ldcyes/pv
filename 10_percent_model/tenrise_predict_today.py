@@ -25,14 +25,16 @@ def predict_now():
     filtered_df= df_org[features_remain][0:-1]
     print("with NA value data shape")
     print(filtered_df.shape)
-    filtered_df=filtered_df.replace([np.inf, -np.inf], np.nan).dropna()
+    test_date='2024-03'#str(formatted_date)
+    #test_df_new = filtered_df[filtered_df['date'].dt.strftime('%Y-%m').str.contains('2024-03')]
+    filtered_df=filtered_df.replace([np.inf, -np.inf], np.nan).dropna(subset=features_x)
+    
     print("drop NA value data shape")
     print(filtered_df.shape)
     print("last day price, stock name")
     print(filtered_df['date'][-1:])
     print(filtered_df['key'][-1:])
 
-    test_date='2024-03'#str(formatted_date)
     res_df=pd.DataFrame()
     import copy
 
@@ -42,14 +44,13 @@ def predict_now():
             model = pickle.load(open('./model_save/'+str(model_n)+str(test_target)+'_10rise_model.pkl','rb'))
             test_df=filtered_df#filtered_df[filtered_df['date']==test_date]
             res_df=copy.deepcopy(test_df[['key','date','price/20low']])
-            #print(test_df)
-            #print(filtered_df[filtered_df['date']==test_date].shape)
             print(test_df[features_x].shape)
-            res_df.loc[:,'pred price']=model.predict(test_df[features_x].values)
+            #test_df_new = test_df['date'].str.contains(test_date)
+            res_df.loc[:,'pred price']=model.predict(test_df.loc[-1:,features_x].values)
             print("---------------------------- post process ====== -------------------------------")
             print("model name",model_n,"predict hold day",test_target)
             res_df=res_df.sort_values(by='pred price',ascending=False)
-            #print(res_df.index)
+
             i=0
             res_df=res_df[res_df['date'].astype(str).str.contains(test_date)]
             res_df=res_df.head(20)

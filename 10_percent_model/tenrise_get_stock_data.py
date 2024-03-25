@@ -15,7 +15,6 @@ def data_norm(a,b):
     else:
         return a/b
 
-
 def get_near_high(df,key,day,day_range):
     cur_high=df[key,'day']['收盘'][day]
     for i in range(day_range):
@@ -51,8 +50,9 @@ def build_frame(stock_keys,start_date,end_date):
     table = pd.DataFrame()
     table_row_index = 0
 
-    for key in stock_keys:
-            
+    for key_item in stock_keys:
+            key = str(key_item[0])
+            print(key)
             df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101) # day
             df[key,'week']  = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=102) # week
             df[key,'month'] = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=103) # month
@@ -183,18 +183,18 @@ def build_frame(stock_keys,start_date,end_date):
                                                                         (df[key,'day']['收盘'][day-5]<df[key,'day']['开盘'][day-5]) and
                                                                         (df[key,'day']['收盘'][day-6]<df[key,'day']['开盘'][day-6]))
                         if(day+train_targets[0]<len(df[key,'day'])):
-                            table.loc[table_row_index,'gain'+str(train_targets[0])] = df[key,'day']['收盘'][day+train_targets[0]]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'gain'+str(train_targets[0])] = data_norm(df[key,'day']['收盘'][day+train_targets[0]],df[key,'day']['收盘'][day])
                             #table.loc[table_row_index,'day20gain'] =df[key,'day']['收盘'][day+20]
                         if(day+train_targets[1]<len(df[key,'day'])):
-                            table.loc[table_row_index,'gain'+str(train_targets[1])] = df[key,'day']['收盘'][day+train_targets[1]]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'gain'+str(train_targets[1])] = data_norm(df[key,'day']['收盘'][day+train_targets[1]],df[key,'day']['收盘'][day])
                             #table.loc[table_row_index,'day10gain'] =df[key,'day']['收盘'][day+10]
                         if(day+train_targets[2]<len(df[key,'day'])):
-                            table.loc[table_row_index,'gain'+str(train_targets[2])] = df[key,'day']['收盘'][day+train_targets[2]]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'gain'+str(train_targets[2])] = data_norm(df[key,'day']['收盘'][day+train_targets[2]],df[key,'day']['收盘'][day])
                             #table.loc[table_row_index,'day5gain'] =df[key,'day']['收盘'][day+5]
                         if(day+train_targets[3]<len(df[key,'day'])):
-                            table.loc[table_row_index,'gain'+str(train_targets[3])] = df[key,'day']['收盘'][day+train_targets[3]]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'gain'+str(train_targets[3])] = data_norm(df[key,'day']['收盘'][day+train_targets[3]],df[key,'day']['收盘'][day])
                         if(day+train_targets[4]<len(df[key,'day'])):
-                            table.loc[table_row_index,'gain'+str(train_targets[4])] = df[key,'day']['收盘'][day+train_targets[4]]/df[key,'day']['收盘'][day]
+                            table.loc[table_row_index,'gain'+str(train_targets[4])] = data_norm(df[key,'day']['收盘'][day+train_targets[4]],df[key,'day']['收盘'][day])
                   
                             #table.loc[table_row_index,'day1gain'] =df[key,'day']['收盘'][day+1]
                 table_row_index = table_row_index+1
@@ -207,6 +207,7 @@ def build_frame(stock_keys,start_date,end_date):
                 if(df[key,'month']['日期'][month_index]==df[key,'day']['日期'][day]):
                     if((month_index+1)<len(df[key,'month'])):
                         month_index +=1# next_month_index
+                        
     return table
                                                    
 #color=[]
@@ -231,7 +232,7 @@ if __name__ == "__main__":
     formatted_date = current_date.strftime('%Y%m%d')
     if(train):
         start_date = train_start_date
-        end_date   = str(formatted_date)
+        end_date   = train_end_date
         file_name = "10rise_TRAIN_DATA.csv"
     else:
         start_date = test_start_date
@@ -253,6 +254,7 @@ if __name__ == "__main__":
     stock_keys=stock_keys.drop_duplicates(inplace=False)
     print("the stock total numbers ",stock_keys.shape)
     print(stock_keys)
+    print(type(stock_keys))
     table=build_frame(list(stock_keys.values),start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
     csv_df.to_csv("./stock_data/"+file_name)

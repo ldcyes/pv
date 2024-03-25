@@ -37,11 +37,12 @@ def send_email(subject, body):
 
 if __name__ == "__main__":
     current_date = datetime.now()
-    formatted_date = current_date.strftime('%Y%m%d')
+    formatted_date = current_date.strftime('%Y-%m-%d')
 
     if(train):
         start_date = train_start_date
         end_date   = str(formatted_date)
+        print(end_date)
         file_name = "STOCK_TRAIN_DATA.csv"
     else:
         start_date = test_start_date

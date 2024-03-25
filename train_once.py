@@ -55,14 +55,15 @@ def train_once():
        print(test[features_remain].shape)
 
        ss = MinMaxScaler()
-       model_list=[DecisionTreeRegressor(),
+       model_list=[
+                   #DecisionTreeRegressor(),
                    #SVR(kernel='rbf',gamma=0.1,C=1.0),
                    RandomForestRegressor(n_estimators=1000,n_jobs=-1),
                    #MLPRegressor(hidden_layer_sizes=(128,512,1024),activation='tanh', solver='adam', alpha=1e-5, random_state=1),
                    #SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
                    XGBRegressor(objective='reg:squarederror')]
 
-       model_name=['decision tree',#'SVM',
+       model_name=[#'decision tree',#'SVM',
                    'RandomForest',#'MLP','SGD',
                    'XGboost']
        i=0
