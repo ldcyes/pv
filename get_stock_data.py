@@ -9,6 +9,7 @@ from datetime import datetime
 from global_var import *
 import akshare as ak
 import stock_api
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 
 def norm(a,b):
     if(b==0):
@@ -311,7 +312,6 @@ if __name__ == "__main__":
     if(train):
         start_date = train_start_date
         end_date   = str(formatted_date)
-        print(end_date)
         file_name = "STOCK_TRAIN_DATA.csv"
     else:
         start_date = test_start_date
@@ -320,4 +320,5 @@ if __name__ == "__main__":
 
     table= build_frame(x_stocks,start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
+    #csv_df = pd.DataFrame(scaler.fit_transform(csv_df[features_norm_all]),columns=csv_df.columns)
     csv_df.to_csv("./stock_data/"+file_name)

@@ -2,7 +2,7 @@ from sklearnex import patch_sklearn,unpatch_sklearn
 patch_sklearn()
 from sklearn import svm
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler,StandardScaler
 from sklearn.svm import SVR
 from sklearn.linear_model import SGDRegressor  
 from sklearn.ensemble import RandomForestRegressor
@@ -37,12 +37,21 @@ def train_once():
        filtered_df = df_org[features_remain][0:-2]
        print("trained feature data shape")
        print(filtered_df.shape)
+       #filtered_df.to_csv("./stock_data/raw_STOCK_TRAIN_DATA.csv",index=False)
        filtered_df= filtered_df.replace([np.inf, -np.inf], np.nan).dropna()
 
        print("train data drop NA value data shape")
        print(filtered_df.shape)
        print(filtered_df)
 
+       if(scale_type==0):
+              scaler = StandardScaler()
+       else:
+              scaler = MinMaxScaler()
+       
+       #filtered_df.to_csv("./stock_data/before_STOCK_TRAIN_DATA.csv",index=False)
+       #filtered_df['near1m_open'] = pd.DataFrame(scaler.fit_transform(filtered_df[['near1m_open']]))
+       #filtered_df.to_csv("./stock_data/after_STOCK_TRAIN_DATA.csv",index=False)
 
        print("------------------=== split train and testset ===------------------")
        train,test = train_test_split(filtered_df,test_size=test_size,shuffle=True)
@@ -54,7 +63,6 @@ def train_once():
        print("test data shape")
        print(test[features_remain].shape)
 
-       ss = MinMaxScaler()
        model_list=[
                    #DecisionTreeRegressor(),
                    #SVR(kernel='rbf',gamma=0.1,C=1.0),

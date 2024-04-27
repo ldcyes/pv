@@ -149,16 +149,16 @@ def get_xueqiu_stock(symbol,begin,period,count,indicator):
 	#begin='1664553600000'
 	type ='before'
 	count='-'+str(count)
-
+	# 记得 cookies 要换，网络抓包用chrome右键检查，network，刷新页面，找到对应的请求，找到cookies
 	headers = {
 		'authority':'stock.xueqiu.com',
 		'method':'GET',
-		'path':'/v5/stock/quote.json?symbol=SOXX&extend=detail',
-		'Cookie':'cookiesu=151695304469557; device_id=e03752a399b2fb0af3b0de7be0f5aecd; Hm_lvt_1db88642e346389874251b5a1eded6e3=1710552375,1710651637,1710680592,1710934211; xq_a_token=4073e6e6374f87012c62c18aafb5f86b5f99f127; xqat=4073e6e6374f87012c62c18aafb5f86b5f99f127; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjE0NTI4NDczNzAsImlzcyI6InVjIiwiZXhwIjoxNzEzNTI2MzIwLCJjdG0iOjE3MTA5MzQzMjA5MTYsImNpZCI6ImQ5ZDBuNEFadXAifQ.ifJgARi3ZRpofQeR99LB3qbRq5p48tP2BaziarAEN9UPizt_WR-eqI1P7yL_Wrvzdd1xkj1v4YdIEAfqJUHGql8o5se1gvKWR0mzOMXXH-AY12Thb35kl_TxEn6NJOvA5yX6GLhSbaJl46Y3NdvapcnR66g9784HPhmPV6zlndkdm61FCP_UWTMiYbN1DM6_tsSaSe1kjZC94e-OcdP9BOnWKrvGAjlj_IAoYejP700EfgC05-TGrjxDKkcZkja-XDA-7iDPGS82juscPx6awr2vTaZc7UDI26XS5I_jBC3aLW-S6QlNrr7vHLfA6d_83oLPkl_c9iPINuS7Hsqeow; xq_r_token=67cbfd65abeb2323d556e3b4855dec1641c5f89a; xq_is_login=1; u=1452847370; s=ck14mgbrj8; is_overseas=0; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1710942354',
+		'Cookie':'cookiesu=151695304469557; device_id=e03752a399b2fb0af3b0de7be0f5aecd; xq_is_login=1; u=1452847370; s=ck14mgbrj8; xq_a_token=e1921205da217e22a87b5578a895b12e27484dce; xqat=e1921205da217e22a87b5578a895b12e27484dce; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjE0NTI4NDczNzAsImlzcyI6InVjIiwiZXhwIjoxNzE1MTcxOTYwLCJjdG0iOjE3MTI1Nzk5NjAxMzUsImNpZCI6ImQ5ZDBuNEFadXAifQ.NL2pnNvv_MsJpRciEjxkyDxeUAweeadVpIJCB9iyuKhlUFA-FhF0QcUgTuyYcv85UMicq_-Ikosq3UJDCjsGpx6o36JM5PaOph32bbHiAWigZNm4nUnBPnzzzHRJGKbERm8Z1w2ekjfyS-sIyeatAE-TV5tiBPlOJ32BmWj-z4IjpyqvutW240h2X3A8ed_tZup4IxCiq__7O4y7rntlUkUa9Y9ZcW1QEEIIzhQYynDvIJocGe4IK-0rLaO5l31GJz7mSe1gZWFX4a_9FenyP57c59o2NMScYXPh-mgPOwaqqEGOFNmuoXsUdrGui3ae8VX8CHTthVn-bT7wfTLvGA; xq_r_token=750299626128fbb15e0ae795bba0f9b8ddcdb7c9; Hm_lvt_1db88642e346389874251b5a1eded6e3=1711895120,1712579961,1712623262,1712675673; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1712748187',
 		'Origin':'https://xueqiu.com',
-		'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+		'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
 	}
 	req_str = 'https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol='+str(symbol)+'&begin='+str(begin)+'&period='+str(period)+'&type='+str(type)+'&count='+str(count)+'&indicator=kline,pe,pb,ps,pcf,market_capital,agt,ggt,balance'
+    
 	response =requests.get(req_str,headers=headers)
 	#response=requests.get('https://stock.xueqiu.com/v5/stock/chart/kline.json?symbol=SOXX&begin=1664553600000&period=day&type=before&count=-8&indicator=kline',headers=headers)
 	data = json.loads(response.text)

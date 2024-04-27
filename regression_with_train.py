@@ -140,6 +140,8 @@ for date in range(regress_start_date,df_org.shape[0],1):
           first_price = cur_price
           is_first_price = 0
           start_position = int(start_value/cur_price)
+          last_buy_condition = 0
+          last_sell_condition = 0
 
      for target in train_targets:
             
@@ -179,8 +181,18 @@ for date in range(regress_start_date,df_org.shape[0],1):
                     price_list.append(price.tolist()[0])
           print("------------------------------ train end ------------------------------")
 
-          buy_condition  = price >= 1.05
-          sell_condition = price <= 0.95
+          buy_condition  = price >= 1.05 and last_buy_condition >= cnt_buy
+          sell_condition = price <= 0.95 and last_sell_condition >= cnt_sell
+
+          if(price >= 1.05):
+               last_buy_condition += price >= 1.05
+          else:
+               last_buy_condition = 0
+          if(price <= 0.95):
+               last_sell_condition += price <= 0.95
+          else:
+               last_buy_condition = 0
+
           # how much to buy and sell
           buy_position = int(cur_free/cur_price*1)
           sell_position = int(cur_position*1)
@@ -215,7 +227,7 @@ for date in range(regress_start_date,df_org.shape[0],1):
 print("------=====------")
 print("valid days: ",len(profile))
 print("predict: ",target,'days')
-print("max drawdown: ",calculate_max_drawdown(pd.Series(profile)))
+print("max drawdown: ",calculate_max_drawdown(pd.Series(profile))) 
 draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/"+str(target)+'regression_with_train.jpg')
 print("final value :", cur_free+cur_position*cur_price)
 print("win rate :", (cur_free+cur_position*cur_price)/gold_list[-1])
