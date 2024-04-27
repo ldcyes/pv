@@ -8,7 +8,7 @@ test_targets = ['3','5','10','20']
 #buy_position = [10,20,30,40]
 #sell_position = [10,20,30,40]
 # build following stocks
-
+reg_inc_pcent = {'3':0.02,'5':0.03,'10':0.05,'20':0.05}
 changes = [1,0.5,0.25]
 cnt_sell = 0
 cnt_buy = 0

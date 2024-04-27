@@ -71,7 +71,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      free_list = []
      # 将这三个列表按列存储在一个csv文件中
      
-     file = open('profilo_inference'+str(regression_train_targtes)+str(change)+'.csv', 'w', newline='')
+     file = open('profilo_inference'+str(stock)+str(reg_inc_pcent[regression_train_targtes[0]])+str(regression_train_targtes)+str(change)+'.csv', 'w', newline='')
      writer = csv.writer(file)
      writer.writerow(["date", "price", "profile","gold profile","buy condition","buy position","sell condition","sell position","cur position","cur free"])
      
@@ -176,16 +176,18 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                          print(price)
                          price_list.append(price.tolist()[0])
                print("------------------------------ train end ------------------------------")
-     
-               buy_condition  = price >= 1.05 and last_buy_condition >= cnt_buy
-               sell_condition = price <= 0.95 and last_sell_condition >= cnt_sell
+
+               buy_shreshold  = 1+reg_inc_pcent[target]
+               sell_shreshold = 1-reg_inc_pcent[target]
+               buy_condition  = price >= buy_shreshold and last_buy_condition >= cnt_buy
+               sell_condition = price <= sell_shreshold and last_sell_condition >= cnt_sell
      
                if(price >= 1.05):
-                    last_buy_condition += price >= 1.05
+                    last_buy_condition += price >= buy_shreshold
                else:
                     last_buy_condition = 0
                if(price <= 0.95):
-                    last_sell_condition += price <= 0.95
+                    last_sell_condition += price <= sell_shreshold
                else:
                     last_buy_condition = 0
      
@@ -235,10 +237,13 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      print("valid days: ",len(profile))
      print("predict: ",target,'days')
      print("max drawdown: ",calculate_max_drawdown(pd.Series(profile))) 
-     draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/"+str(target)+'regression_with_train.jpg')
+     draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/dayrange"+str(target)+'sheshold'+str(reg_inc_pcent[target])+'regression_with_train'+str(y_stock)+str(change)+'.jpg')
      print("final value :", cur_free+cur_position*cur_price)
      print("win rate :", (cur_free+cur_position*cur_price)/gold_list[-1])
-     regression_log.writerow([str(y_stock), regression_train_targtes, change,len(profile),calculate_max_drawdown(pd.Series(profile)),cur_free+cur_position*cur_price,(cur_free+cur_position*cur_price)/gold_list[-1]])
+     regression_log.writerow([str(y_stock), regression_train_targtes,
+                              change,len(profile),calculate_max_drawdown(pd.Series(profile)),
+                              reg_inc_pcent[target],
+                              cur_free+cur_position*cur_price,(cur_free+cur_position*cur_price)/gold_list[-1]])
      file.close()
 
 if __name__ == "__main__":
@@ -263,7 +268,7 @@ if __name__ == "__main__":
      
      file = open('profilo_inference_all.csv', 'w', newline='')
      writer = csv.writer(file)
-     writer.writerow(["stock","train_target","change","valid days","max drawdown","final value","win rate"])
+     writer.writerow(["stock","train_target","change","valid days","max drawdown","inc_sheshold","final value","win rate"])
 
      for train_target in regression_train_targtes:
           for change in changes:
