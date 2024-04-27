@@ -128,6 +128,46 @@ def xueqiu_data(key,start_date,count=1000):
 
     return stock_us_daily_df,weekly_data,monthly_data
 
+def feature_data(key,start_date,end_date):
+    
+    stock_us_daily_df=ef.futures.get_quote_history(quote_ids=key)
+    
+    stock_us_daily_df['日期'] = pd.to_datetime(stock_us_daily_df['日期'])
+    stock_us_daily_df.set_index('日期', inplace=True)
+
+    # 计算月线数据
+    monthly_data = stock_us_daily_df.resample('M').agg({
+        '开盘': 'first',  # 每月第一天的开盘价
+        '最高': 'max',    # 每月的最高价
+        '最低': 'min',    # 每月的最低价
+        '收盘': 'last',   # 每月最后一天的收盘价
+        '成交量': 'sum'   # 每月的成交量总和
+    })
+
+    # 计算周线数据
+    weekly_data = stock_us_daily_df.resample('W').agg({
+        '开盘': 'first',  # 每周第一天的开盘价
+        '最高': 'max',    # 每周的最高价
+        '最低': 'min',    # 每周的最低价
+        '收盘': 'last',   # 每周最后一天的收盘价
+        '成交量': 'sum'   # 每周的成交量总和
+    })
+
+    # 重置索引，使日期变回普通列
+    monthly_data.reset_index(inplace=True)
+    weekly_data.reset_index(inplace=True)
+    stock_us_daily_df.reset_index(inplace=True)
+    
+    #stock_us_daily_df=col_rename(stock_us_daily_df)
+    #weekly_data=col_rename(weekly_data)
+    #monthly_data=col_rename(monthly_data)
+
+    stock_us_daily_df.to_csv("./stock_data/"+key+"_day.csv")
+    weekly_data.to_csv("./stock_data/"+key+"_week.csv")
+    monthly_data.to_csv("./stock_data/"+key+"_month.csv")
+
+    return stock_us_daily_df,weekly_data,monthly_data
+
 def build_frame(stock_keys,start_date,end_date):
     df = {}
     table = pd.DataFrame()
@@ -135,6 +175,8 @@ def build_frame(stock_keys,start_date,end_date):
             
             if(is_xueqiu==1):
                 df[key,'day'],df[key,'week'],df[key,'month'] = xueqiu_data(key,end_date,count=365*12)
+            elif(is_futures==1):
+                df[key,'day'],df[key,'week'],df[key,'month'] = feature_data(key,start_date,end_date)
             else:
                 df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101)# day
                 df[key,'week']  = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=102)# week
@@ -147,7 +189,7 @@ def build_frame(stock_keys,start_date,end_date):
             week_index  = 0
             month_index = 0
             for day in range(len(df[key,'day'])):
-                if(is_xueqiu):
+                if(is_xueqiu or is_futures):
                     if(df[key,'week']['日期'][week_index]<df[key,'day']['日期'][day]):
                         # 2-25,3-3,3-10
                         # 3/1, 3/4-8,3/11
@@ -278,7 +320,7 @@ def build_frame(stock_keys,start_date,end_date):
                             table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[2])] = norm(df[key,'day']['收盘'][day+train_targets[2]],df[key,'day']['收盘'][day])
                         if(day+train_targets[3]<len(df[key,'day'])):
                             table.loc[df[key,'day']['日期'][day],str(key)+'gain'+str(train_targets[3])] = norm(df[key,'day']['收盘'][day+train_targets[3]],df[key,'day']['收盘'][day])
-                if(is_xueqiu):
+                if(is_xueqiu or is_futures):
                     #if(stock_api.timestamp(df[key,'week']['日期'][week_index])<stock_api.timestamp(str(df[key,'day']['日期'][day]))):
                     #    # 2-25,3-3,3-10
                     #    # 3/1, 3/4-8,3/11
@@ -296,12 +338,8 @@ def build_frame(stock_keys,start_date,end_date):
                         if((month_index+1)<len(df[key,'month'])):
                             month_index +=1# next_month_index
 
-    #union_ele = np.concatenate([table[str(stock_keys[0])+'date'].unique(),table[str(stock_keys[1])+'date'].unique()])
-    #unique_value = np.unique(union_ele)
-    #new_index = pd.Series(np.arange(len(unique_value))).reset_index(drop=True)
-    
-    #table.set_index(unique_value,inplace=True)
-
+    #table = table.rename(columns={table.columns[0]:'date'})
+    #table = table.sort_values('date')
     return table
 
 if __name__ == "__main__":

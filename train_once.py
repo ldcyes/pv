@@ -17,7 +17,6 @@ import numpy as np
 import pickle
 from global_var import *
 
-
 def train_once():
        df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
 
@@ -34,7 +33,7 @@ def train_once():
 
        print("orginal data shape")
        print(df_org.shape)
-       filtered_df = df_org[features_remain][0:-2]
+       filtered_df = df_org[features_remain][0:-2].copy()
        print("trained feature data shape")
        print(filtered_df.shape)
        #filtered_df.to_csv("./stock_data/raw_STOCK_TRAIN_DATA.csv",index=False)

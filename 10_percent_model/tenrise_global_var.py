@@ -1,6 +1,6 @@
 # trainning and test following stocks
-x_stocks=['SOXX','QQQ']
-y_stock ='SOXX'
+x_stocks=['SOXX','TSLA']
+y_stock ='TSLA'
 train_targets = [1,3,5,10,20]
 data_targets = [1,3,5,10,20]
 test_targets = ['1','3','5']
@@ -10,9 +10,9 @@ test_targets = ['1','3','5']
 
 test_model_name=[
 #'decision tree',
-#'SVM',
+'SVM',
 'RandomForest', #81
-#'MLP',
+'MLP',
 #'SGD',
 'XGboost' #93
 ]
@@ -48,5 +48,5 @@ regress_start_date = 1500 # at lest 1000 days data 5 years
 train_start_date = '20100617'
 train_end_date   = '20240212'
 test_start_date  = '20200118'
-test_end_date    = '20240324'
+test_end_date    = '20240410'
 test_size = 0.2 # train ratio

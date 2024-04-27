@@ -3,6 +3,8 @@ import numpy as np
 import pickle
 from tenrise_global_var import *
 from datetime import datetime
+from sklearnex import patch_sklearn,unpatch_sklearn
+patch_sklearn()
 
 def predict_now():
     current_date = datetime.now()
@@ -25,15 +27,15 @@ def predict_now():
     filtered_df= df_org[features_remain][0:-1]
     print("with NA value data shape")
     print(filtered_df.shape)
-    test_date=str(formatted_date)
+    test_date='2024-04-09'#str(formatted_date)
     #test_df_new = filtered_df[filtered_df['date'].dt.strftime('%Y-%m').str.contains('2024-03')]
     filtered_df=filtered_df.replace([np.inf, -np.inf], np.nan).dropna(subset=features_x)
     
     print("drop NA value data shape")
     print(filtered_df.shape)
-    print("last day price, stock name")
-    print(filtered_df['date'][-1:])
-    print(filtered_df['key'][-1:])
+    #print("last day price, stock name")
+    #print(filtered_df['date'][-1:])
+    #print(filtered_df['key'][-1:])
 
     res_df=pd.DataFrame()
     import copy

@@ -1,15 +1,17 @@
 # trainning and test following stocks
-x_stocks=['QQQ','SOXX']
+x_stocks=['QQQ','SOXX']#113.cum
 y_stock ='SOXX'
-train_targets = [20]
+train_targets = [3,5,10,20]
+regression_train_targtes = [[3],[5],[10],[20]]
 data_targets = ['3','5','10','20']
 test_targets = ['3','5','10','20']
 #buy_position = [10,20,30,40]
 #sell_position = [10,20,30,40]
 # build following stocks
 
-cnt_sell = 1
-cnt_buy = 1
+changes = [1,0.5,0.25]
+cnt_sell = 0
+cnt_buy = 0
 test_model_name=[
 #'decision tree',
 #'SVM',
@@ -19,6 +21,7 @@ test_model_name=[
 'XGboost' #93
 ]
 
+sell_stock = 0
 gen_inc10_flag =1
 scale_type = 1
 
@@ -75,10 +78,23 @@ for x_stock in x_stocks:
             
 train = 1
 is_xueqiu = 1
+is_futures = 0
 regress_start_date = 1500 # at lest 1000 days data 5 years
-train_start_date = '20120617'
-train_end_date   = '2024-03-21'
-test_start_date  = '20140618'
-test_end_date    = '20180330'
+# xueqiu '2012-06-17'
+# efinance '20140618'
+
+if(is_xueqiu):
+    train_start_date = '2012-06-17'
+    train_end_date   = '2024-03-21'
+    test_start_date  = '2014-06-18'
+    test_end_date    = '2018-03-30'
+else:
+    train_start_date = '20140618'
+    train_end_date   = '20240321'
+    test_start_date  = '20140618'
+    test_end_date    = '20180330'
+
 test_size = 0.2 # train ratio
+
+
 
