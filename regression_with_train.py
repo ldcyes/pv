@@ -19,6 +19,7 @@ from global_var import *
 import csv
 import matplotlib.pyplot as plt
 
+
 def draw_list(my_list,buy_point,sell_point,gold_point,positon,free,file_name):
      # 使用numpy创建一个时间和数值对  
     time = np.arange(len(my_list))  
@@ -71,7 +72,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      free_list = []
      # 将这三个列表按列存储在一个csv文件中
      
-     file = open('profilo_inference'+str(stock)+str(reg_inc_pcent[regression_train_targtes[0]])+str(regression_train_targtes)+str(change)+'.csv', 'w', newline='')
+     file = open('profilo_inference'+str(stock)+str(reg_inc_pcent[str(regression_train_targtes[0])])+str(regression_train_targtes)+str(change)+'.csv', 'w', newline='')
      writer = csv.writer(file)
      writer.writerow(["date", "price", "profile","gold profile","buy condition","buy position","sell condition","sell position","cur position","cur free"])
      
@@ -177,8 +178,8 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                          price_list.append(price.tolist()[0])
                print("------------------------------ train end ------------------------------")
 
-               buy_shreshold  = 1+reg_inc_pcent[target]
-               sell_shreshold = 1-reg_inc_pcent[target]
+               buy_shreshold  = 1+reg_inc_pcent[str(target)]
+               sell_shreshold = 1-reg_inc_pcent[str(target)]
                buy_condition  = price >= buy_shreshold and last_buy_condition >= cnt_buy
                sell_condition = price <= sell_shreshold and last_sell_condition >= cnt_sell
      
@@ -222,7 +223,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                profile.append(cur_free+cur_position*cur_price)
                gold_list.append(cur_price*start_value/first_price)
                
-               writer.writerow([filtered_df[-1:][y_stock+'date'],
+               writer.writerow([filtered_df_inference[-1:][y_stock+'date'],
                                 cur_price,
                                 cur_free+cur_position*cur_price,
                                 cur_price*start_value/first_price,
@@ -237,12 +238,16 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      print("valid days: ",len(profile))
      print("predict: ",target,'days')
      print("max drawdown: ",calculate_max_drawdown(pd.Series(profile))) 
-     draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/dayrange"+str(target)+'sheshold'+str(reg_inc_pcent[target])+'regression_with_train'+str(y_stock)+str(change)+'.jpg')
+     draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/dayrange"+str(target)+'sheshold'+str(reg_inc_pcent[str(target)])+'regression_with_train'+str(y_stock)+str(change)+'.jpg')
      print("final value :", cur_free+cur_position*cur_price)
      print("win rate :", (cur_free+cur_position*cur_price)/gold_list[-1])
+     writer.writerow([str(y_stock), regression_train_targtes,
+                              change,len(profile),calculate_max_drawdown(pd.Series(profile)),
+                              reg_inc_pcent[str(target)],
+                              cur_free+cur_position*cur_price,(cur_free+cur_position*cur_price)/gold_list[-1]])
      regression_log.writerow([str(y_stock), regression_train_targtes,
                               change,len(profile),calculate_max_drawdown(pd.Series(profile)),
-                              reg_inc_pcent[target],
+                              reg_inc_pcent[str(target)],
                               cur_free+cur_position*cur_price,(cur_free+cur_position*cur_price)/gold_list[-1]])
      file.close()
 

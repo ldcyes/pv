@@ -17,8 +17,8 @@ import numpy as np
 import pickle
 from global_var import *
 
-def train_once():
-       df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
+def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y_stock='SOXX',features=[]):
+       #df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
 
        print("------------------=== data preprocess ===------------------")
        features_remain = []
@@ -37,8 +37,8 @@ def train_once():
        print("trained feature data shape")
        print(filtered_df.shape)
        #filtered_df.to_csv("./stock_data/raw_STOCK_TRAIN_DATA.csv",index=False)
-       filtered_df= filtered_df.replace([np.inf, -np.inf], np.nan).dropna()
-
+       filtered_df_trainning = filtered_df.replace([np.inf, -np.inf], np.nan).dropna().copy()
+       filtered_df_inference = filtered_df.dropna(subset=features_x).copy()
        print("train data drop NA value data shape")
        print(filtered_df.shape)
        print(filtered_df)
@@ -53,7 +53,7 @@ def train_once():
        #filtered_df.to_csv("./stock_data/after_STOCK_TRAIN_DATA.csv",index=False)
 
        print("------------------=== split train and testset ===------------------")
-       train,test = train_test_split(filtered_df,test_size=test_size,shuffle=True)
+       train,test = train_test_split(filtered_df_trainning,test_size=test_size,shuffle=True)
 
        test_x = test[features_x].values
        train_x = train[features_x].values
@@ -85,7 +85,7 @@ def train_once():
               for string in [' pred',' confid']:
                      col_list.append(str(target)+string)
 
-       res_df = pd.DataFrame(columns=col_list,index=model_name)
+       #res_df = pd.DataFrame(columns=col_list,index=model_name)
 
        for target in train_targets:
               print("------------------------------ "+str(target)+" day train predict new training and test --------------------------------")
@@ -106,20 +106,38 @@ def train_once():
                    predictions = model.predict(test_x)
                    print("trainning error")
                    print(mean_squared_error(test_y, predictions))
-                   with open('./model_save/'+str(model_name[i])+str(target)+'_model.pkl','wb') as f:
-                          pickle.dump(model, f)
+                   with open('./model_save/'+str(model_name[i])+str(target)+'_model.pkl','wb') as f:  
+                        pickle.dump(model, f)
                    print("------ test latest day ------")
-                   print(df_org[features_x][-1:])
-                   price=model.predict(df_org[features_x][-1:].values)
+                   print(filtered_df_inference[features_x][-1:])
+                   price=model.predict(filtered_df_inference[features_x][-1:].values)
                    res_df.loc[str(model_name[i]),str(target)+' pred']  =price
                    res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)
+                   res_df.loc[str(model_name[i]),str(target)+' stock']=str(stock)
                    print("predict value")
                    print(price)      
                    i=i+1
 
-       print(res_df)
+       #print(res_df)
 
        return res_df
 
 if __name__ == "__main__":
-       train_once()
+
+
+       df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
+       
+       col_list = []
+       
+       for target in train_targets:
+              for string in [' pred',' confid']:
+                     col_list.append(str(target)+string)
+       
+       model_name=[#'decision tree',#'SVM',
+                   'RandomForest',#'MLP','SGD',
+                   'XGboost']
+       
+       res_df = pd.DataFrame(columns=col_list,index=model_name)
+
+       res_df=train_once(df_org,res_df,x_stocks=x_stocks,train_targets=train_targets,y_stock=y_stock,features=features)
+       print(res_df)

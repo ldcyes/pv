@@ -8,8 +8,9 @@ test_targets = ['3','5','10','20']
 #buy_position = [10,20,30,40]
 #sell_position = [10,20,30,40]
 # build following stocks
-reg_inc_pcent = {'3':0.02,'5':0.03,'10':0.05,'20':0.05}
-changes = [1,0.5,0.25]
+# bigger shreshold will increase trade rate, but decrease profit
+reg_inc_pcent = {'3':0.01,'5':0.015,'10':0.02,'20':0.02}
+changes = [1,0.5]
 cnt_sell = 0
 cnt_buy = 0
 test_model_name=[
@@ -96,5 +97,105 @@ else:
 
 test_size = 0.2 # train ratio
 
-
-
+NASDAQ_100 = \
+['AAPL'\
+,'ABNB'\
+,'ADBE'\
+,'ADI'\
+,'ADP'
+,'ADSK'
+,'AEP'
+,'AMAT'
+,'AMD'
+,'AMGN'
+,'AMZN'
+,'ANSS'
+,'ASML'
+,'AVGO'
+,'AZN'
+,'BIIB'
+,'BKNG'
+,'BKR'
+,'CCEP'
+,'CDNS'
+,'CDW'
+,'CEG'
+,'CHTR'
+,'CMCSA'
+,'COST'
+,'CPRT'
+,'CRWD'
+,'CSCO'
+,'CSGP'
+,'CSX'
+,'CTAS'
+,'CTSH'
+,'DASH'
+,'DDOG'
+,'DLTR'
+,'DXCM'
+,'EA'
+,'EXC'
+,'FANG'
+,'FAST'
+,'FTNT'
+,'GEHC'
+,'GFS'
+,'GILD'
+,'GOOG'
+,'GOOGL'
+,'HON'
+,'IDXX'
+,'ILMN'
+,'INTC'
+,'INTU'
+,'ISRG'
+,'KDP'
+,'KHC'
+,'KLAC'
+,'LIN'
+,'LRCX'
+,'LULU'
+,'MAR'
+,'MCHP'
+,'MDB'
+,'MDLZ'
+,'MELI'
+,'META'
+,'MNST'
+,'MRNA'
+,'MRVL'
+,'MSFT'
+,'MU'
+,'NFLX'
+,'NVDA'
+,'NXPI'
+,'ODFL'
+,'ON'
+,'ORLY'
+,'PANW'
+,'PAYX'
+,'PCAR'
+,'PDD'
+,'PEP'
+,'PYPL'
+,'QCOM'
+,'REGN'
+,'ROP'
+,'ROST'
+,'SBUX'
+,'SIRI'
+,'SNPS'
+,'TEAM'
+,'TMUS'
+,'TSLA'
+,'TTD'
+,'TTWO'
+,'TXN'
+,'VRSK'
+,'VRTX'
+,'WBA'
+,'WBD'
+,'WDAY'
+,'XEL'
+,'ZS']
