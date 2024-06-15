@@ -20,7 +20,8 @@ def send_email(subject, body):
     msg['From'] = email_sender
     msg['To'] = email_receiver
     msg['Subject'] = subject
-    msg.attach(MIMEText(body, 'html', 'utf-8'))
+    html_body = ''.join(body)
+    msg.attach(MIMEText(html_body, 'html', 'utf-8'))
 
     # 发送邮件
     try:
@@ -48,9 +49,24 @@ if __name__ == "__main__":
         start_date = test_start_date
         end_date   = str(formatted_date)
         file_name = "STOCK_TEST_DATA.csv"
-    table= build_frame(x_stocks,start_date,end_date)
-    csv_df = pd.DataFrame(data=table,index=None)
-    csv_df.to_csv("./stock_data/"+file_name)
-    res = train_once()
-    html_content=res.to_html(index=True,header=True)
+    
+    mail_stocks = ['SOXX','NVDA','TSLA','LI','QCOM']
+    html_content = []
+    col_list = []
+       
+    for target in train_targets:
+              for string in [' pred',' confid']:
+                     col_list.append(str(target)+string)
+       
+    model_name=[#'decision tree',#'SVM',
+                   'RandomForest',#'MLP','SGD',
+                   'XGboost']
+       
+    res = pd.DataFrame(columns=col_list,index=model_name)
+    for stock in mail_stocks:
+        table= build_frame(['QQQ',stock],start_date,end_date)
+        csv_df = pd.DataFrame(data=table,index=None)
+        csv_df.to_csv("./stock_data/"+str(stock)+file_name)
+        res = train_once(csv_df,x_stocks=['QQQ',stock],res_df=res,train_targets=train_targets,y_stock=stock,features=features)
+        html_content.append(res.to_html(index=True,header=True))
     send_email("stock predictor", html_content)

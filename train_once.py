@@ -16,6 +16,7 @@ import pandas as pd
 import numpy as np
 import pickle
 from global_var import *
+import argparse
 
 def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y_stock='SOXX',features=[]):
        #df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
@@ -78,7 +79,8 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
        print("latest day date")
        print(df_org[y_stock+'date'][-1:])
        print("latest day features")
-       print(df_org[features_remain][-1:])
+       print(filtered_df_trainning[features_remain][-1:])
+       print(filtered_df_inference[features_remain][-1:])
 
        col_list = []
        for target in train_targets:
@@ -124,7 +126,9 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
 
 if __name__ == "__main__":
 
-
+       parser = argparse.ArgumentParser(description='trainning model')
+       parser.add_argument('--y_stock', type=str, default='SOXX', help='trainning stock')
+       args = parser.parse_args()
        df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
        
        col_list = []
@@ -139,5 +143,5 @@ if __name__ == "__main__":
        
        res_df = pd.DataFrame(columns=col_list,index=model_name)
 
-       res_df=train_once(df_org,res_df,x_stocks=x_stocks,train_targets=train_targets,y_stock=y_stock,features=features)
+       res_df=train_once(df_org,res_df,x_stocks=x_stocks+[str(args.y_stock)],train_targets=train_targets,y_stock=args.y_stock,features=features)
        print(res_df)

@@ -171,6 +171,7 @@ def feature_data(key,start_date,end_date):
 def build_frame(stock_keys,start_date,end_date):
     df = {}
     table = pd.DataFrame()
+
     for key in stock_keys:
             
             if(is_xueqiu==1):
@@ -343,7 +344,11 @@ def build_frame(stock_keys,start_date,end_date):
     return table
 
 if __name__ == "__main__":
-    
+
+    import argparse
+    parser = argparse.ArgumentParser(description='trainning model')
+    parser.add_argument('--y_stock', type=str, default='SOXX', help='trainning stock')
+    args = parser.parse_args()
     current_date = datetime.now()
     formatted_date = current_date.strftime('%Y-%m-%d')
 
@@ -356,7 +361,7 @@ if __name__ == "__main__":
         end_date   = str(formatted_date)
         file_name = "STOCK_TEST_DATA.csv"
 
-    table= build_frame(x_stocks,start_date,end_date)
+    table= build_frame(x_stocks+[str(args.y_stock)],start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
     #csv_df = pd.DataFrame(scaler.fit_transform(csv_df[features_norm_all]),columns=csv_df.columns)
     csv_df.to_csv("./stock_data/"+file_name)

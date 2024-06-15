@@ -1,5 +1,5 @@
 # trainning and test following stocks
-x_stocks=['QQQ','SOXX']#113.cum
+x_stocks=['QQQ']#113.cum
 y_stock ='SOXX'
 train_targets = [3,5,10,20]
 regression_train_targtes = [[3],[5],[10],[20]]
