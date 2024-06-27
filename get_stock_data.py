@@ -364,4 +364,5 @@ if __name__ == "__main__":
     table= build_frame(x_stocks+[str(args.y_stock)],start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
     #csv_df = pd.DataFrame(scaler.fit_transform(csv_df[features_norm_all]),columns=csv_df.columns)
-    csv_df.to_csv("./stock_data/"+file_name)
+    #csv_df.to_csv("./stock_data/"+file_name)
+    csv_df.to_csv("./stock_data/"+str(args.y_stock)+file_name)

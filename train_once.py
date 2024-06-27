@@ -129,7 +129,7 @@ if __name__ == "__main__":
        parser = argparse.ArgumentParser(description='trainning model')
        parser.add_argument('--y_stock', type=str, default='SOXX', help='trainning stock')
        args = parser.parse_args()
-       df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
+       df_org = pd.read_csv("./stock_data/"+str(args.y_stock)+"STOCK_TRAIN_DATA.csv")
        
        col_list = []
        
