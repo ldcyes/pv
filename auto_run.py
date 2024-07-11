@@ -50,7 +50,7 @@ if __name__ == "__main__":
         end_date   = str(formatted_date)
         file_name = "STOCK_TEST_DATA.csv"
     
-    mail_stocks = ['SOXX','NVDA','TSLA','LI','QCOM']
+    mail_stocks = ['NVDA','TSLA','LI','QCOM','BIDU']
     html_content = []
     col_list = []
        
@@ -67,6 +67,7 @@ if __name__ == "__main__":
         table= build_frame(['QQQ',stock],start_date,end_date)
         csv_df = pd.DataFrame(data=table,index=None)
         csv_df.to_csv("./stock_data/"+str(stock)+file_name)
-        res = train_once(csv_df,x_stocks=['QQQ',stock],res_df=res,train_targets=train_targets,y_stock=stock,features=features)
+        df_org = pd.read_csv("./stock_data/"+str(stock)+"STOCK_TRAIN_DATA.csv")
+        res = train_once(df_org=df_org,x_stocks=['QQQ',stock],res_df=res,train_targets=train_targets,y_stock=stock,features=features)
         html_content.append(res.to_html(index=True,header=True))
     send_email("stock predictor", html_content)

@@ -42,7 +42,7 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
        filtered_df_inference = filtered_df.dropna(subset=features_x).copy()
        print("train data drop NA value data shape")
        print(filtered_df.shape)
-       print(filtered_df)
+       print(df_org)
 
        if(scale_type==0):
               scaler = StandardScaler()
@@ -54,7 +54,7 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
        #filtered_df.to_csv("./stock_data/after_STOCK_TRAIN_DATA.csv",index=False)
 
        print("------------------=== split train and testset ===------------------")
-       train,test = train_test_split(filtered_df_trainning,test_size=test_size,shuffle=True)
+       train,test = train_test_split(filtered_df_trainning,test_size=test_size,shuffle=True,random_state=88)
 
        test_x = test[features_x].values
        train_x = train[features_x].values
@@ -66,10 +66,10 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
        model_list=[
                    #DecisionTreeRegressor(),
                    #SVR(kernel='rbf',gamma=0.1,C=1.0),
-                   RandomForestRegressor(n_estimators=1000,n_jobs=-1),
+                   RandomForestRegressor(n_estimators=1000,n_jobs=-1,random_state=88),
                    #MLPRegressor(hidden_layer_sizes=(128,512,1024),activation='tanh', solver='adam', alpha=1e-5, random_state=1),
                    #SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
-                   XGBRegressor(objective='reg:squarederror')]
+                   XGBRegressor(objective='reg:squarederror',random_state=88)]
 
        model_name=[#'decision tree',#'SVM',
                    'RandomForest',#'MLP','SGD',
@@ -79,9 +79,8 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
        print("latest day date")
        print(df_org[y_stock+'date'][-1:])
        print("latest day features")
-       print(filtered_df_trainning[features_remain][-1:])
-       print(filtered_df_inference[features_remain][-1:])
-
+       print(df_org[features_remain][-1:])
+       pd.DataFrame(data=df_org[features_remain][-1:].values,index=None).to_csv("./stock_data/latest_day_features.csv",index=False) 
        col_list = []
        for target in train_targets:
               for string in [' pred',' confid']:
@@ -111,8 +110,8 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
                    with open('./model_save/'+str(model_name[i])+str(target)+'_model.pkl','wb') as f:  
                         pickle.dump(model, f)
                    print("------ test latest day ------")
-                   print(filtered_df_inference[features_x][-1:])
-                   price=model.predict(filtered_df_inference[features_x][-1:].values)
+                   #print(df_org[features_x][-1:])
+                   price=model.predict(df_org[features_x][-1:].values)
                    res_df.loc[str(model_name[i]),str(target)+' pred']  =price
                    res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)
                    res_df.loc[str(model_name[i]),str(target)+' stock']=str(stock)
