@@ -52,6 +52,11 @@ for stock in x_stocks:
        for feature in features:
               features_remain.append(stock+feature)
               features_x.append(stock+feature)
+for stock in y_stock:
+       for feature in features:
+              features_remain.append(stock+feature)
+              features_x.append(stock+feature)
+              
 for target in test_targets:
        features_remain.append(y_stock+"gain"+str(target))
 

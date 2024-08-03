@@ -18,7 +18,32 @@ import pickle
 from global_var import *
 import csv
 import matplotlib.pyplot as plt
+def get_features_name(back_time):
 
+    features = ["7dayup","7daydown",
+            "price_vs_up_day","price_vs_mid_day","price_vs_low_day",
+            "price_vs_up_week","price_vs_mid_week","price_vs_low_week",
+            "price_vs_up_month","price_vs_mid_month","price_vs_low_month",
+            "price_vs_20high","price_vs_20low"]
+    
+    for i in range(1,back_time+1):
+        features.append('near'+str(i)+'d_open')
+        features.append('near'+str(i)+'d_close')
+        features.append('near'+str(i)+'d_high')
+        features.append('near'+str(i)+'d_low')
+        features.append('near'+str(i)+'d_volume')
+        features.append('near'+str(i)+'w_open')
+        features.append('near'+str(i)+'w_close')
+        features.append('near'+str(i)+'w_high')
+        features.append('near'+str(i)+'w_low')
+        features.append('near'+str(i)+'w_volume')
+        features.append('near'+str(i)+'m_open')
+        features.append('near'+str(i)+'m_close')
+        features.append('near'+str(i)+'m_high')
+        features.append('near'+str(i)+'m_low')
+        features.append('near'+str(i)+'m_volume')
+
+    return features
 
 def draw_list(my_list,buy_point,sell_point,gold_point,positon,free,file_name):
      # 使用numpy创建一个时间和数值对  
@@ -56,7 +81,7 @@ def calculate_max_drawdown(prices):
     max_drawdown = drawdown.min()
     return max_drawdown
      
-def regression(df_org,features_remain,features_x,regress_start_date,regression_train_targtes,change,regression_log):
+def regression(df_org,features_remain,features_x,regress_start_date,regression_train_targtes,change,regression_log,back_time):
      net_value = 100000
      start_value = 100000
      cur_free  = 100000
@@ -238,7 +263,8 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      print("valid days: ",len(profile))
      print("predict: ",target,'days')
      print("max drawdown: ",calculate_max_drawdown(pd.Series(profile))) 
-     draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,"./results_pic/dayrange"+str(target)+'sheshold'+str(reg_inc_pcent[str(target)])+'regression_with_train'+str(y_stock)+str(change)+'.jpg')
+     draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,
+               "./results_pic/dayrange"+str(target)+'sheshold'+str(reg_inc_pcent[str(target)])+'regression_with_train'+str(y_stock)+str(change)+'backtime'+str(back_time)+'.jpg')
      print("final value :", cur_free+cur_position*cur_price)
      print("win rate :", (cur_free+cur_position*cur_price)/gold_list[-1])
      writer.writerow([str(y_stock), regression_train_targtes,
@@ -248,33 +274,46 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      regression_log.writerow([str(y_stock), regression_train_targtes,
                               change,len(profile),calculate_max_drawdown(pd.Series(profile)),
                               reg_inc_pcent[str(target)],
-                              cur_free+cur_position*cur_price,(cur_free+cur_position*cur_price)/gold_list[-1]])
+                              cur_free+cur_position*cur_price,(cur_free+cur_position*cur_price)/gold_list[-1]],back_time)
      file.close()
 
 if __name__ == "__main__":
+
      print("------------------=== prepare data ===------------------")
-     df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
 
-     features_x = []
-     features_remain = []
-     for stock in x_stocks:
-            features_remain.append(stock+'date')
-            features_remain.append(stock+'close')
-
-            for feature in features:
-                   features_remain.append(stock+feature)
-                   features_x.append(stock+feature)
-
-     for target in train_targets:
-            features_remain.append(y_stock+"gain"+str(target))
-
-     print("orginal data shape")
-     print(df_org.shape)
+     df_org = pd.read_csv("./stock_data/SOXXSTOCK_TRAIN_DATA.csv")
      
      file = open('profilo_inference_all.csv', 'w', newline='')
      writer = csv.writer(file)
-     writer.writerow(["stock","train_target","change","valid days","max drawdown","inc_sheshold","final value","win rate"])
+     writer.writerow(["stock","train_target","change","valid days","max drawdown","inc_sheshold","final value","win rate","back_time"])
 
-     for train_target in regression_train_targtes:
-          for change in changes:
-               regression(df_org,features_remain,features_x,regress_start_date,train_target,change,writer)
+     for back_time in back_times:
+     
+          features = get_features_name(back_time)
+          features_x = []
+          features_remain = []
+
+          for stock in x_stocks:
+               features_remain.append(stock+'date')
+               features_remain.append(stock+'close')
+
+               for feature in features:
+                    features_remain.append(stock+feature)
+                    features_x.append(stock+feature)
+
+          features_remain.append(y_stock+'date')
+          features_remain.append(y_stock+'close')
+          for feature in features:
+               features_remain.append(y_stock+feature)
+               features_x.append(y_stock+feature)
+
+          for target in train_targets:
+                 features_remain.append(y_stock+"gain"+str(target))
+
+          print("orginal data shape")
+          print(df_org.shape)
+
+          for train_target in regression_train_targtes:
+               for change in changes:
+                    regression(df_org,features_remain,features_x,regress_start_date,train_target,change,writer,back_time)
+

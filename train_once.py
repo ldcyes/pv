@@ -24,6 +24,7 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
        print("------------------=== data preprocess ===------------------")
        features_remain = []
        features_x = []
+
        for stock in x_stocks:
               for feature in features:
                      features_remain.append(stock+feature)
@@ -80,13 +81,15 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
        print(df_org[y_stock+'date'][-1:])
        print("latest day features")
        print(df_org[features_remain][-1:])
+
+       # check the latest day features
        pd.DataFrame(data=df_org[features_remain][-1:].values,index=None).to_csv("./stock_data/latest_day_features.csv",index=False) 
+
+       # result column name 
        col_list = []
        for target in train_targets:
               for string in [' pred',' confid']:
                      col_list.append(str(target)+string)
-
-       #res_df = pd.DataFrame(columns=col_list,index=model_name)
 
        for target in train_targets:
               print("------------------------------ "+str(target)+" day train predict new training and test --------------------------------")

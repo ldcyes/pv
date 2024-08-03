@@ -169,6 +169,8 @@ def feature_data(key,start_date,end_date):
     return stock_us_daily_df,weekly_data,monthly_data
 
 def build_frame(stock_keys,start_date,end_date):
+
+    back_times = 11 # 5, 7 ,9
     df = {}
     table = pd.DataFrame()
 
@@ -205,86 +207,25 @@ def build_frame(stock_keys,start_date,end_date):
                     table.loc[df[key,'day']['日期'][day],str(key)+'week_date']   = df[key,'week']['日期'][week_index-1]
                     table.loc[df[key,'day']['日期'][day],str(key)+'month_date']  = df[key,'month']['日期'][month_index-1]
                     table.loc[df[key,'day']['日期'][day],str(key)+'close']       = df[key,'day']['收盘'][day]
-                    #table.loc[df[key,'day']['日期'][day],str(key)+'volume'] = df[key,'day']['成交量'][day]
-                    if(month_index-5>=0):
-                    # near 5 week price and data
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1d_open']   = norm(df[key,'day']['收盘'][day],df[key,'day']['开盘'][day-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1d_close']  = norm(df[key,'day']['收盘'][day],df[key,'day']['收盘'][day-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1d_high']   = norm(df[key,'day']['收盘'][day],df[key,'day']['最高'][day-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1d_low']    = norm(df[key,'day']['收盘'][day],df[key,'day']['最低'][day-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1d_volume'] = norm(df[key,'day']['成交量'][day],df[key,'day']['成交量'][day-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2d_open']   = norm(df[key,'day']['收盘'][day],df[key,'day']['开盘'][day-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2d_close']  = norm(df[key,'day']['收盘'][day],df[key,'day']['收盘'][day-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2d_high']   = norm(df[key,'day']['收盘'][day],df[key,'day']['最高'][day-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2d_low']    = norm(df[key,'day']['收盘'][day],df[key,'day']['最低'][day-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2d_volume'] = norm(df[key,'day']['成交量'][day],df[key,'day']['成交量'][day-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3d_open']   = norm(df[key,'day']['收盘'][day],df[key,'day']['开盘'][day-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3d_close']  = norm(df[key,'day']['收盘'][day],df[key,'day']['收盘'][day-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3d_high']   = norm(df[key,'day']['收盘'][day],df[key,'day']['最高'][day-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3d_low']    = norm(df[key,'day']['收盘'][day],df[key,'day']['最低'][day-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3d_volume'] = norm(df[key,'day']['成交量'][day],df[key,'day']['成交量'][day-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4d_open']   = norm(df[key,'day']['收盘'][day],df[key,'day']['开盘'][day-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4d_close']  = norm(df[key,'day']['收盘'][day],df[key,'day']['收盘'][day-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4d_high']   = norm(df[key,'day']['收盘'][day],df[key,'day']['最高'][day-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4d_low']    = norm(df[key,'day']['收盘'][day],df[key,'day']['最低'][day-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4d_volume'] = norm(df[key,'day']['成交量'][day],df[key,'day']['成交量'][day-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5d_open']   = norm(df[key,'day']['收盘'][day],df[key,'day']['开盘'][day-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5d_close']  = norm(df[key,'day']['收盘'][day],df[key,'day']['收盘'][day-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5d_high']   = norm(df[key,'day']['收盘'][day],df[key,'day']['最高'][day-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5d_low']    = norm(df[key,'day']['收盘'][day],df[key,'day']['最低'][day-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5d_volume'] = norm(df[key,'day']['成交量'][day],df[key,'day']['成交量'][day-5])
+                    table.loc[df[key,'day']['日期'][day],str(key)+'volume'] = df[key,'day']['成交量'][day]
+                    if(month_index-back_times>=0):
 
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1w_open']  = norm(df[key,'day']['收盘'][day],df[key,'week']['开盘'][week_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1w_close']  = norm(df[key,'day']['收盘'][day],df[key,'week']['收盘'][week_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1w_high']   = norm(df[key,'day']['收盘'][day],df[key,'week']['最高'][week_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1w_low']    = norm(df[key,'day']['收盘'][day],df[key,'week']['最低'][week_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1w_volume'] = norm(df[key,'day']['成交量'][day],df[key,'week']['成交量'][week_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2w_open']   = norm(df[key,'day']['收盘'][day],df[key,'week']['开盘'][week_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2w_close']  = norm(df[key,'day']['收盘'][day],df[key,'week']['收盘'][week_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2w_high']   = norm(df[key,'day']['收盘'][day],df[key,'week']['最高'][week_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2w_low']    = norm(df[key,'day']['收盘'][day],df[key,'week']['最低'][week_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2w_volume'] = norm(df[key,'day']['成交量'][day],df[key,'week']['成交量'][week_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3w_open']   = norm(df[key,'day']['收盘'][day],df[key,'week']['开盘'][week_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3w_close']  = norm(df[key,'day']['收盘'][day],df[key,'week']['收盘'][week_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3w_high']   = norm(df[key,'day']['收盘'][day],df[key,'week']['最高'][week_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3w_low']    = norm(df[key,'day']['收盘'][day],df[key,'week']['最低'][week_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3w_volume'] = norm(df[key,'day']['成交量'][day],df[key,'week']['成交量'][week_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4w_open']   = norm(df[key,'day']['收盘'][day],df[key,'week']['开盘'][week_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4w_close']  = norm(df[key,'day']['收盘'][day],df[key,'week']['收盘'][week_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4w_high']   = norm(df[key,'day']['收盘'][day],df[key,'week']['最高'][week_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4w_low']    = norm(df[key,'day']['收盘'][day],df[key,'week']['最低'][week_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4w_volume'] = norm(df[key,'day']['成交量'][day],df[key,'week']['成交量'][week_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5w_open']   = norm(df[key,'day']['收盘'][day],df[key,'week']['开盘'][week_index-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5w_close']  = norm(df[key,'day']['收盘'][day],df[key,'week']['收盘'][week_index-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5w_high']   = norm(df[key,'day']['收盘'][day],df[key,'week']['最高'][week_index-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5w_low']    = norm(df[key,'day']['收盘'][day],df[key,'week']['最低'][week_index-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5w_volume'] = norm(df[key,'day']['成交量'][day],df[key,'week']['成交量'][week_index-5])
-                        # near 5 month price 
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1m_open']   = norm(df[key,'day']['收盘'][day],df[key,'month']['开盘'][month_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1m_close']  = norm(df[key,'day']['收盘'][day],df[key,'month']['收盘'][month_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1m_high']   = norm(df[key,'day']['收盘'][day],df[key,'month']['最高'][month_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1m_low']    = norm(df[key,'day']['收盘'][day],df[key,'month']['最低'][month_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near1m_volume'] = norm(df[key,'day']['成交量'][day],df[key,'month']['成交量'][month_index-1])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2m_open']   = norm(df[key,'day']['收盘'][day],df[key,'month']['开盘'][month_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2m_close']  = norm(df[key,'day']['收盘'][day],df[key,'month']['收盘'][month_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2m_high']   = norm(df[key,'day']['收盘'][day],df[key,'month']['最高'][month_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2m_low']    = norm(df[key,'day']['收盘'][day],df[key,'month']['最低'][month_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near2m_volume'] = norm(df[key,'day']['成交量'][day],df[key,'month']['成交量'][month_index-2])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3m_open']   = norm(df[key,'day']['收盘'][day],df[key,'month']['开盘'][month_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3m_close']  = norm(df[key,'day']['收盘'][day],df[key,'month']['收盘'][month_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3m_high']   = norm(df[key,'day']['收盘'][day],df[key,'month']['最高'][month_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3m_low']    = norm(df[key,'day']['收盘'][day],df[key,'month']['最低'][month_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near3m_volume'] = norm(df[key,'day']['成交量'][day],df[key,'month']['成交量'][month_index-3])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4m_open']   = norm(df[key,'day']['收盘'][day],df[key,'month']['开盘'][month_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4m_close']  = norm(df[key,'day']['收盘'][day],df[key,'month']['收盘'][month_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4m_high']   = norm(df[key,'day']['收盘'][day],df[key,'month']['最高'][month_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4m_low']    = norm(df[key,'day']['收盘'][day],df[key,'month']['最低'][month_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near4m_volume'] = norm(df[key,'day']['成交量'][day],df[key,'month']['成交量'][month_index-4])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5m_open']   = norm(df[key,'day']['收盘'][day],df[key,'month']['开盘'][month_index-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5m_close']  = norm(df[key,'day']['收盘'][day],df[key,'month']['收盘'][month_index-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5m_high']   = norm(df[key,'day']['收盘'][day],df[key,'month']['最高'][month_index-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5m_low']    = norm(df[key,'day']['收盘'][day],df[key,'month']['最低'][month_index-5])
-                        table.loc[df[key,'day']['日期'][day],str(key)+'near5m_volume'] = norm(df[key,'day']['成交量'][day],df[key,'month']['成交量'][month_index-5])
+                        for i in range(1,back_times+1):
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'d_open']   = norm(df[key,'day']['收盘'][day],df[key,'day']['开盘'][day-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'d_close']  = norm(df[key,'day']['收盘'][day],df[key,'day']['收盘'][day-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'d_high']   = norm(df[key,'day']['收盘'][day],df[key,'day']['最高'][day-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'d_low']    = norm(df[key,'day']['收盘'][day],df[key,'day']['最低'][day-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'d_volume'] = norm(df[key,'day']['成交量'][day],df[key,'day']['成交量'][day-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'w_open']   = norm(df[key,'day']['收盘'][day],df[key,'week']['开盘'][week_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'w_close']  = norm(df[key,'day']['收盘'][day],df[key,'week']['收盘'][week_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'w_high']   = norm(df[key,'day']['收盘'][day],df[key,'week']['最高'][week_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'w_low']    = norm(df[key,'day']['收盘'][day],df[key,'week']['最低'][week_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'w_volume'] = norm(df[key,'day']['成交量'][day],df[key,'week']['成交量'][week_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'m_open']   = norm(df[key,'day']['收盘'][day],df[key,'month']['开盘'][month_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'m_close']  = norm(df[key,'day']['收盘'][day],df[key,'month']['收盘'][month_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'m_high']   = norm(df[key,'day']['收盘'][day],df[key,'month']['最高'][month_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'m_low']    = norm(df[key,'day']['收盘'][day],df[key,'month']['最低'][month_index-i])
+                            table.loc[df[key,'day']['日期'][day],str(key)+'near'+str(i)+'m_volume'] = norm(df[key,'day']['成交量'][day],df[key,'month']['成交量'][month_index-i])
 
                         table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_up_day']    = norm(df[key,'day']['收盘'][day],df[key,'day']['upper'][day])
                         table.loc[df[key,'day']['日期'][day],str(key)+'price_vs_mid_day']   = norm(df[key,'day']['收盘'][day],df[key,'day']['middle'][day])
@@ -366,3 +307,4 @@ if __name__ == "__main__":
     #csv_df = pd.DataFrame(scaler.fit_transform(csv_df[features_norm_all]),columns=csv_df.columns)
     #csv_df.to_csv("./stock_data/"+file_name)
     csv_df.to_csv("./stock_data/"+str(args.y_stock)+file_name)
+    

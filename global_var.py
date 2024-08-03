@@ -5,6 +5,7 @@ train_targets = [3,5,10,20]
 regression_train_targtes = [[3],[5],[10],[20]]
 data_targets = ['3','5','10','20']
 test_targets = ['3','5','10','20']
+back_times =[5,7,9,11]
 #buy_position = [10,20,30,40]
 #sell_position = [10,20,30,40]
 # build following stocks
