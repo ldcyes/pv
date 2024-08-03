@@ -144,6 +144,6 @@ if __name__ == "__main__":
                    'XGboost']
        
        res_df = pd.DataFrame(columns=col_list,index=model_name)
-
+       features = get_features_name(back_times[0])
        res_df=train_once(df_org,res_df,x_stocks=x_stocks+[str(args.y_stock)],train_targets=train_targets,y_stock=args.y_stock,features=features)
        print(res_df)

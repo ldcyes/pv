@@ -18,32 +18,7 @@ import pickle
 from global_var import *
 import csv
 import matplotlib.pyplot as plt
-def get_features_name(back_time):
 
-    features = ["7dayup","7daydown",
-            "price_vs_up_day","price_vs_mid_day","price_vs_low_day",
-            "price_vs_up_week","price_vs_mid_week","price_vs_low_week",
-            "price_vs_up_month","price_vs_mid_month","price_vs_low_month",
-            "price_vs_20high","price_vs_20low"]
-    
-    for i in range(1,back_time+1):
-        features.append('near'+str(i)+'d_open')
-        features.append('near'+str(i)+'d_close')
-        features.append('near'+str(i)+'d_high')
-        features.append('near'+str(i)+'d_low')
-        features.append('near'+str(i)+'d_volume')
-        features.append('near'+str(i)+'w_open')
-        features.append('near'+str(i)+'w_close')
-        features.append('near'+str(i)+'w_high')
-        features.append('near'+str(i)+'w_low')
-        features.append('near'+str(i)+'w_volume')
-        features.append('near'+str(i)+'m_open')
-        features.append('near'+str(i)+'m_close')
-        features.append('near'+str(i)+'m_high')
-        features.append('near'+str(i)+'m_low')
-        features.append('near'+str(i)+'m_volume')
-
-    return features
 
 def draw_list(my_list,buy_point,sell_point,gold_point,positon,free,file_name):
      # 使用numpy创建一个时间和数值对  
