@@ -249,7 +249,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      regression_log.writerow([str(y_stock), regression_train_targtes,
                               change,len(profile),calculate_max_drawdown(pd.Series(profile)),
                               reg_inc_pcent[str(target)],
-                              cur_free+cur_position*cur_price,(cur_free+cur_position*cur_price)/gold_list[-1]],back_time)
+                              cur_free+cur_position*cur_price,(cur_free+cur_position*cur_price)/gold_list[-1],back_time])
      file.close()
 
 if __name__ == "__main__":
