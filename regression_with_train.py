@@ -80,7 +80,6 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      is_first_price = 1
      print(regress_start_date,df_org.shape[0])
      
-     
      for date in range(regress_start_date,df_org.shape[0]+1,1):
      
           print("------------------=== inc one day and train from beginning ===------------------")
@@ -131,7 +130,12 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
           #print(filtered_df[features_remain][-1:])
      
      
+          pre_price=filtered_df_inference.iloc[-3][y_stock+'close']
           cur_price=filtered_df_inference.iloc[-2][y_stock+'close']
+          next_price=filtered_df_inference.iloc[-1][y_stock+'close']
+          
+          sharp_down_sell_condition =  cur_price/pre_price < 0.9566 #test only
+
           if(is_first_price):
                first_price = cur_price
                is_first_price = 0
@@ -176,13 +180,16 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                          print("predict value")
                          print(price)
                          price_list.append(price.tolist()[0])
+
                print("------------------------------ train end ------------------------------")
 
                buy_shreshold  = 1+reg_inc_pcent[str(target)]
                sell_shreshold = 1-reg_inc_pcent[str(target)]
                buy_condition  = price >= buy_shreshold and last_buy_condition >= cnt_buy
                sell_condition = price <= sell_shreshold and last_sell_condition >= cnt_sell
-     
+
+               sell_condition = sell_condition or sharp_down_sell_condition
+
                if(price >= 1.05):
                     last_buy_condition += price >= buy_shreshold
                else:
@@ -193,7 +200,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                     last_buy_condition = 0
      
                # how much to buy and sell
-               buy_position = int(cur_free/cur_price*change)
+               buy_position = int(cur_free/next_price*change)
                sell_position = int(cur_position*change)
      
                if(buy_condition):
@@ -211,12 +218,12 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                position_list.append(cur_position*100)
                free_list.append(cur_free)
      
-               if(buy_condition and ((buy_position * cur_price) < cur_free)):
-                    buy_list.append(buy_position*cur_price)
+               if(buy_condition and ((buy_position * next_price) < cur_free)):
+                    buy_list.append(buy_position*next_price)
                else:
                     buy_list.append(0)
                if(sell_condition and (cur_position>sell_position)):
-                    sell_list.append(sell_position*cur_price)
+                    sell_list.append(sell_position*next_price)
                else:
                     sell_list.append(0)
      
@@ -239,7 +246,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      print("predict: ",target,'days')
      print("max drawdown: ",calculate_max_drawdown(pd.Series(profile))) 
      draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,
-               "./results_pic/dayrange"+str(target)+'sheshold'+str(reg_inc_pcent[str(target)])+'regression_with_train'+str(y_stock)+str(change)+'backtime'+str(back_time)+'.jpg')
+               "./results_pic/dayrange"+str(target)+'sheshold'+str(reg_inc_pcent[str(target)])+'regression_with_train'+str(y_stock)+str(change)+'backtime'+str(back_time)+str(len(profile))+'.jpg')
      print("final value :", cur_free+cur_position*cur_price)
      print("win rate :", (cur_free+cur_position*cur_price)/gold_list[-1])
      writer.writerow([str(y_stock), regression_train_targtes,
@@ -264,7 +271,7 @@ if __name__ == "__main__":
 
      for back_time in back_times:
      
-          features = get_features_name(back_time)
+          features =get_features_name(back_time)
           features_x = []
           features_remain = []
 

@@ -113,7 +113,7 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
                    with open('./model_save/'+str(model_name[i])+str(target)+'_model.pkl','wb') as f:  
                         pickle.dump(model, f)
                    print("------ test latest day ------")
-                   #print(df_org[features_x][-1:])
+                   print(df_org[features_x][-1:])
                    price=model.predict(df_org[features_x][-1:].values)
                    res_df.loc[str(model_name[i]),str(target)+' pred']  =price
                    res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)

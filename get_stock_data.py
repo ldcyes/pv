@@ -282,6 +282,23 @@ def build_frame(stock_keys,start_date,end_date):
 
     #table = table.rename(columns={table.columns[0]:'date'})
     #table = table.sort_values('date')
+    # 将A列转换为日期格式
+    # table.rename(columns={table.columns[0]: 'QQQday_date'}, inplace=True)
+    # table['D'] = pd.to_datetime(table['Date'], format='%Y/%m/%d')
+
+    # 按A列日期由先到后排序
+    # df_sorted = table.sort_values(stock_keys[0]+'date')
+    if(len(stock_keys)>1):
+        table['date'] = table[stock_keys[1]+'date'].combine_first(table[stock_keys[0]+'date'])
+    else:
+        table['date'] = table[stock_keys[0]+'date']
+    
+    table.sort_values('date',inplace=True)   
+    
+    # 将排序后的数据保存到新的CSV文件
+
+    #table.to_csv('sorted_file.csv', index=False)
+
     return table
 
 if __name__ == "__main__":
@@ -306,5 +323,5 @@ if __name__ == "__main__":
     csv_df = pd.DataFrame(data=table,index=None)
     #csv_df = pd.DataFrame(scaler.fit_transform(csv_df[features_norm_all]),columns=csv_df.columns)
     #csv_df.to_csv("./stock_data/"+file_name)
-    csv_df.to_csv("./stock_data/"+str(args.y_stock)+file_name)
+    csv_df.to_csv("./stock_data/"+str(args.y_stock)+file_name,index=False)
     

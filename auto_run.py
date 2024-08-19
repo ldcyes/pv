@@ -50,7 +50,7 @@ if __name__ == "__main__":
         end_date   = str(formatted_date)
         file_name = "STOCK_TEST_DATA.csv"
     
-    mail_stocks = ['NVDA','TSLA','LI','QCOM','BIDU']
+    mail_stocks = ['SOXX','IWM','NVDA','TSLA','LI','QCOM','BIDU']
     html_content = []
     col_list = []
        
