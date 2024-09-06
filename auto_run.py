@@ -25,8 +25,8 @@ def send_email(subject, body):
 
     # 发送邮件
     try:
-        server = smtplib.SMTP('smtp.163.com',25)
-        server.starttls()
+        server = smtplib.SMTP_SSL('smtp.163.com',465)
+        #server.starttls()
         server.login(email_sender, password)
         text = msg.as_string()
         server.sendmail(email_sender, email_receiver, text)
