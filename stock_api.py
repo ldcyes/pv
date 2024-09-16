@@ -135,6 +135,25 @@ def stp_t(timestamp: int) -> str:
         otherStyleTime = time.strftime("%Y-%m-%d", timeArray)
         return otherStyleTime
 
+def get_cookie() -> str:
+# 定义目标网站的URL
+    url = "https://xueqiu.com/S/NVDA"
+# 创建一个会话对象
+    session = requests.Session()
+    headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    response = session.get(url, headers=headers)
+# 获取响应头中的cookies
+    cookies = session.cookies
+    
+    #print(cookies)
+# 打印cookies
+    cookiess = ''
+    for cookie in cookies:
+       cookiess+=f"{cookie.name}={cookie.value};"
+    return str(cookiess)
+
 def get_xueqiu_stock(symbol,begin,period,count,indicator):
         
 	
@@ -153,7 +172,8 @@ def get_xueqiu_stock(symbol,begin,period,count,indicator):
 	headers = {
 		'authority':'stock.xueqiu.com',
 		'method':'GET',
-		'Cookie':"cookiesu=151695304469557; device_id=e03752a399b2fb0af3b0de7be0f5aecd; s=ck14mgbrj8; bid=cad74acbd943fb9fd7a73051f4451aec_lv9oq4zk; xq_is_login=1; u=1452847370; xq_a_token=84556bd394cf16f377cc4938b09efa10ae3f163b; xqat=84556bd394cf16f377cc4938b09efa10ae3f163b; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjE0NTI4NDczNzAsImlzcyI6InVjIiwiZXhwIjoxNzI3NTk4NjAxLCJjdG0iOjE3MjUwMDY2MDExMDQsImNpZCI6ImQ5ZDBuNEFadXAifQ.FfJCnlrrSb3pI9zljxnHqe9eJH-yCUnfqGQ20IVodbcapJYpcDAuTTKeHZsm59Z0yYLntt1V1MZdM8C21DSjeycLKEpwexmpNQDRgb1mrtI2amiALC7quJ6b72zietvxjsTgaSD4P2BzhOEQ7slaqF350Qy_cICQX60s1F2vGPbqN91wNL0T6ulUTxgLGAehLurAWW234Q0UKDkefCHF9saMeevgPMUdCUvSrrOe4tYS3msP_OZMRt50v3EWPc83dyhcz6gb9FSZZJg6HZCr9vLg1OYrdnPmRr5XzJjeRnwu9V-Y0QkovWWNrth2nE8cQvUDLrQ-BmbPbCzpfOiADw; xq_r_token=5a160e4cfa641b936362d56561ef27b897c4c01f; is_overseas=0; Hm_lvt_1db88642e346389874251b5a1eded6e3=1725077287,1725148691,1725239602,1725281761; HMACCOUNT=DB6DE5FE89796214; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1725281793; ssxmod_itna=Yq+xyD0DnDgD9AiQGHqGdYM7zKG8KD0gGO7GoC++DGN4XoDZDiqAPGhDC8fFoeE4+NYlBhp5eDIE+55YCEY4dK3KB8GhFNxb74GLDmKDybUEleDxpq0rD74irDDxD3gD7PGmDieznD7oUM9LXBFqGRD0YDzqDgD7QqwqDEDG3D03UY7DxSiDDliYWhCYePDYpBnqQK=nrDAdoZYGGBD0tDIqGXlYHtxDt1gPxDcd9O=ppcWWrDtqD9+eN2Cn4SemNnQ64P7ODPIDYrI0Y4b+GiAboYBD44Ya+5WooNbYo5eXdUD5DAbhdxD=; ssxmod_itna2=Yq+xyD0DnDgD9AiQGHqGdYM7zKG8KD0gGO7GoC+xA6aPPD/lGDF2nh/P/0wUmK0Qz9rAvwzDqxT2D8e0oeIEC/QYpKGFDSeYi775GYdx4xa4tkTGeFx7Qe0DjKD2iYD=",
+		'Cookie':get_cookie(),
+		# "cookiesu=231725977326207; device_id=6ba3c9ae67f7d029481e3d77617b33c1; s=b212ffeacn; xq_is_login=1; u=1452847370; xq_a_token=253cbe130e3b2988f77dc8b79757b1b6030bb930; xqat=253cbe130e3b2988f77dc8b79757b1b6030bb930; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOjE0NTI4NDczNzAsImlzcyI6InVjIiwiZXhwIjoxNzI5MDgwNzU5LCJjdG0iOjE3MjY0ODg3NTk4MzgsImNpZCI6ImQ5ZDBuNEFadXAifQ.YyUthvZ40g-yg7mQeYZx8TjZ0w9N3XF7vh1K1VQ-MFdYix4-bGolKo5OY7UUl2Nkc9cXDQdAH8sXk9FFDuDVyLwB1-pYK3xhq6ghNOuHDY9CniQCdC27eF6RjLZXfwmMiRGVdUjQUc4b1WkOhb1U3J17XZnL2RjRsn18AvKCsnE79PIQdKbRmIP3EIcnt_N5jyLezOqeC0jNnYYRQUTCtvjnSfgBNmOZPeEv_4LFATYCloNWRkG9Vqj8yCK61XylORZAc-6ORud4ZhzlpxwRQ45kXQ4Szk1y8w7F-td91OTQDtEnknZGfITIVVfdnjP8X33J6P3Of2r84HxI6yHu_A; xq_r_token=6eb64673bbefe9e3b49e969e1969192e2c21a532; Hm_lvt_1db88642e346389874251b5a1eded6e3=1725977327,1726148147,1726273737,1726488762; HMACCOUNT=AA946B9B3FD9EDB1; Hm_lpvt_1db88642e346389874251b5a1eded6e3=1726499151; ssxmod_itna=eqfxBCwtGQGHQGdD7+XxBKK0KD=GC/I99KK1iCKDBL0xiNDnD8x7YDvCIMQIGI7i74x4Le47KYe9QEavt=57GnfEk8=BfEdtDCPGnDB925m1DYAkDt4DTD34DYDigKDLDmeD+UsKDd06TN/GT=D3qDwDB=DmqG23etDm4DfDDdBGbeDKO4D0kG4v74DewDDQuW4DYjNDGjxtfi4nCtNPaWtQAqDbxUl/824keDSt3NPGqDMD7tD/+GIvDtDGuOAvBXlQFh1Hr6eTeGuDG=YXdjKw7UDyMj1hAwa7Aq5lhxqCAY7pSqAtRqaBhjnwijx5lhwiDQQhV1NaDhSaNDDPKAvoWhDD; ssxmod_itna2=eqfxBCwtGQGHQGdD7+XxBKK0KD=GC/I99KK1iD8d1AkqGNpUtGa7/DIhUPKApxCKAcw2e4nSQgP2xq2EMgRKq5YeHvp5VxPHj=qOneYIpQfaTxKi7McgYIon+blqbKROvr/yg39aVfjAxqgSS58BLLBfo0B84voWf=8tfN5OQNh3A0pSAoKBfQ1I30ze32t6huzfwN9t+rqhPNE+u3qvS9pfu39D1v7pbYD=lUIYiR8C=cGNQtms221+Wf19owRAgOoXM0=YT5kEzf52SLM+fEq5Geq+OYQwrLxYtIB9+9grXLX/OVyNWGWy1QiHSF=00KCH1Yb0AyiiK60rViDv9iyQxf4+tteK42Dl4jSaQ4+=/55i4vSDWm7yYWW0xqLvdAbC4ehSrAebNt4nebC/FnWaxHRHzokYeEQe8jEhn2YH5vmFWDxplqZIiHKY=4r3D0730DQBD9wKY07siQaOjUuNvZN=2D72eY8+B277=K=Oq9Z3KkCDpDDR=M7qeGDSPr4KN52emhUkBq4hxKAo+iLMaR9ARI6di850otsAKwUqQBPBiQhILX2DD7=DY9eeD===",
 		'Origin':'https://xueqiu.com',
 		'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
 	}
