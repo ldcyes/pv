@@ -104,7 +104,7 @@ for test_target in test_targets:
                 model = pickle.load(open('./model_save/'+str(model_n)+str(test_target)+'_model.pkl','rb'))
                 predict_result = model.predict(df_org[day:day+1][features_x].values)
                 predict_avg = predict_result+predict_avg
-
+            df_org[day:day+1][features_x].values
             buy_condition  = (predict_avg/(len(test_model_name))) >= 1.05
             sell_condition = (predict_avg/(len(test_model_name))) <= 0.95
 

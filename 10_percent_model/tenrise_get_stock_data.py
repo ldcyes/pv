@@ -51,11 +51,16 @@ def build_frame(stock_keys,start_date,end_date):
     table_row_index = 0
 
     for key_item in stock_keys:
-            key = str(key_item[0])
+            key = str(key_item)
             print(key)
             df[key,'day']   = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=101) # day
             df[key,'week']  = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=102) # week
             df[key,'month'] = ef.stock.get_quote_history(stock_codes=key,beg=start_date,end=end_date,fqt=1,klt=103) # month
+
+            # data is empty
+            if(df[key,'day'].empty or df[key,'week'].empty or df[key,'month'].empty):
+                continue
+
             #print(key)
             df[key,'day']   = get_bolls(df[key,'day'])
             df[key,'week']  = get_bolls(df[key,'week'])
@@ -67,7 +72,9 @@ def build_frame(stock_keys,start_date,end_date):
             for day in range(len(df[key,'day'])):
                 
                 # note this should >10 percent rise
-                record_condition = df[key,'day']['涨跌幅'][day] >= 6.8 and week_index-1>=0 and month_index-1>=0 and df[key,'day']['涨跌幅'][day] <= 10.2
+                record_condition = (df[key,'day']['涨跌幅'][day] >= 6.8) and (week_index-1>=0) and \
+                                   (month_index-1>=0) and \
+                                   (df[key,'day']['涨跌幅'][day] <= 10.2)
                 if(record_condition):
                     table.loc[table_row_index,'date']   = df[key,'day']['日期'][day]
                     # the currentable_row_i
@@ -255,6 +262,6 @@ if __name__ == "__main__":
     print("the stock total numbers ",stock_keys.shape)
     print(stock_keys)
     print(type(stock_keys))
-    table=build_frame(list(stock_keys.values),start_date,end_date)
+    table=build_frame(list(stock_keys[0]),start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
     csv_df.to_csv("./stock_data/"+file_name)

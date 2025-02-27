@@ -11,6 +11,8 @@ import efinance as ef
 import numpy as np
 import matplotlib.pyplot as plt
 from io import BytesIO
+from tenrise_get_stock_data import *
+from tenrise_predict_today import *
 
 def send_email(subject, body):
     # 设置邮箱登录信息
@@ -43,8 +45,7 @@ def send_email(subject, body):
         print(e)
 
 if __name__ == "__main__":
-    from tenrise_get_stock_data import *
-    from tenrise_predict_today import *
+
     eft_id_list = [
     '399006',
     '399001',
@@ -52,21 +53,28 @@ if __name__ == "__main__":
     '000905']
     stock_keys=None
     file_name = "10rise_TEST_DATA.csv"
+
     for id in eft_id_list:
         stocks=ef.stock.get_members(id)# CYB300
+        print(stocks,id)
         stock_keys=pd.concat([stock_keys,stocks['股票名称']])
+
     current_date = datetime.now()
     formatted_date = current_date.strftime('%Y%m%d')
     start_date = test_start_date
     end_date   = str(formatted_date)
     stock_keys=stock_keys.drop_duplicates(inplace=False)
+    
     print("the stock total numbers ",stock_keys.shape)
+    print("the stock list is ",stock_keys)
 
-    table=build_frame(list(stock_keys.values),start_date,end_date)
+    table=build_frame(stock_keys,start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
     csv_df.to_csv("./stock_data/"+file_name)
+
     res = pd.DataFrame()
     res = predict_now()
+
     plt.figure()
     res.plot(kind='bar')
     

@@ -108,7 +108,7 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
                    csv_df.to_csv("./stock_data/"+str(model_name[i])+str(target)+'_train_x.csv',index=False)
                    model.fit(train_x,train_y)
                    predictions = model.predict(test_x)
-                   print("trainning error")
+                   print("trainning mean square error")
                    print(mean_squared_error(test_y, predictions))
                    with open('./model_save/'+str(model_name[i])+str(target)+'_model.pkl','wb') as f:  
                         pickle.dump(model, f)
