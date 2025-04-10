@@ -313,11 +313,11 @@ if __name__ == "__main__":
     if(train):
         start_date = train_start_date
         end_date   = str(formatted_date)
-        file_name = "STOCK_TRAIN_DATA.csv"
+        file_name = "_STOCK_TRAIN_DATA.csv"
     else:
         start_date = test_start_date
         end_date   = str(formatted_date)
-        file_name = "STOCK_TEST_DATA.csv"
+        file_name = "_STOCK_TEST_DATA.csv"
 
     table= build_frame(x_stocks+[str(args.y_stock)],start_date,end_date)
     csv_df = pd.DataFrame(data=table,index=None)
