@@ -51,7 +51,8 @@ if __name__ == "__main__":
         end_date   = str(formatted_date)
         file_name = "STOCK_TEST_DATA.csv"
     
-    mail_stocks = ['SOXX']
+    mail_stocks = ['SOXX','AAPL','MSFT','AMZN','GOOGL','NVDA','TSLA','META','NFLX','MSFT','AMD','GOOGL','CSCO','QCOM','AVGO','TXN','ADBE','CRM','NFLX','PYPL','EA']
+    y_stocks = ['SOXX']
     html_content = []
     col_list = []
        
@@ -64,11 +65,13 @@ if __name__ == "__main__":
                    'XGboost']
        
     res = pd.DataFrame(columns=col_list,index=model_name)
+    table= build_frame(['QQQ']+mail_stocks,start_date,end_date)
+    csv_df = pd.DataFrame(data=table,index=None)
+    csv_df.to_csv("./stock_data/"+str(len(mail_stocks))+file_name)
+    df_org = pd.read_csv("./stock_data/"+str(len(mail_stocks))+"STOCK_TRAIN_DATA.csv")
     for stock in mail_stocks:
-        table= build_frame(['QQQ',stock],start_date,end_date)
-        csv_df = pd.DataFrame(data=table,index=None)
-        csv_df.to_csv("./stock_data/"+str(stock)+file_name)
-        df_org = pd.read_csv("./stock_data/"+str(stock)+"STOCK_TRAIN_DATA.csv")
-        res = train_once(df_org=df_org,x_stocks=['QQQ',stock],res_df=res,train_targets=train_targets,y_stock=stock,features=features)
-        html_content.append(res.to_html(index=True,header=True))
+        res = train_once(df_org=df_org,x_stocks=['QQQ']+mail_stocks,res_df=res,train_targets=train_targets,y_stock=y_stock,features=features)
+    res = res.sort_values(by='pred',ascending=False)
+    html_content.append(res.to_html(index=True,header=True))
+    print(res)
     send_email("stock predictor", html_content)

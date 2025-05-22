@@ -19,7 +19,7 @@ from global_var import *
 import argparse
 
 def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y_stock='SOXX',features=[]):
-       #df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
+
 
        print("------------------=== data preprocess ===------------------")
        features_remain = []
@@ -34,7 +34,9 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
               features_remain.append(y_stock+"gain"+str(target))
 
        print("orginal data shape")
+       # 2008-01-01 2025-05-08 2025-05-09 2025-05-12
        print(df_org.shape)
+       # 2008-01-01 2025-05-08
        filtered_df = df_org[features_remain][0:-2].copy()
        print("trained feature data shape")
        print(filtered_df.shape)
@@ -106,6 +108,7 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
                    print(model_name[i])
                    csv_df = pd.DataFrame(data=train_x,index=None)
                    csv_df.to_csv("./stock_data/"+str(model_name[i])+str(target)+'_train_x.csv',index=False)
+                   # trainning phase
                    model.fit(train_x,train_y)
                    predictions = model.predict(test_x)
                    print("trainning mean square error")
@@ -114,10 +117,12 @@ def train_once(df_org,res_df,x_stocks=['QQQ','SOXX'],train_targets=[3,5,10,20],y
                         pickle.dump(model, f)
                    print("------ test latest day ------")
                    print(df_org[features_x][-1:])
+                   # 2025-05-12
+                   print(len(features_x))
                    price=model.predict(df_org[features_x][-1:].values)
-                   res_df.loc[str(model_name[i]),str(target)+' pred']  =price
-                   res_df.loc[str(model_name[i]),str(target)+' confid']=mean_squared_error(test_y, predictions)
-                   res_df.loc[str(model_name[i]),str(target)+' stock']=str(stock)
+                   res_df.loc[str(model_name[i])+str(target),'pred']  =price[0]
+                   res_df.loc[str(model_name[i])+str(target),'confid']=mean_squared_error(test_y, predictions)
+                   res_df.loc[str(model_name[i])+str(target),'stock'] =str(stock)
                    print("predict value")
                    print(price)      
                    i=i+1
@@ -131,7 +136,7 @@ if __name__ == "__main__":
        parser = argparse.ArgumentParser(description='trainning model')
        parser.add_argument('--y_stock', type=str, default='SOXX', help='trainning stock')
        args = parser.parse_args()
-       df_org = pd.read_csv("./stock_data/"+str(args.y_stock)+"STOCK_TRAIN_DATA.csv")
+       df_org = pd.read_csv("./stock_data/"+str(args.y_stock)+"_STOCK_TRAIN_DATA.csv")
        
        col_list = []
        
