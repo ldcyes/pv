@@ -73,7 +73,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      model_list_record = []
      # 将这三个列表按列存储在一个csv文件中
 
-     file = open('profilo_inference_'+str(stock)+'dayrange'+str(regression_train_targtes[0])+'_sheshold'+str(reg_inc_pcent[str(regression_train_targtes[0])])+'_stock_regression'+str(y_stock)+'_change'+str(change)+'_backtime'+str(back_time)+'_daysspeed'+str(df_org.shape[0])+'.csv', 'w', newline='')
+     file = open('profilo_inference_'+str(stock)+'DayRange'+str(regression_train_targtes[0])+'_Sheshold'+str(reg_inc_pcent[str(regression_train_targtes[0])])+'_stock_regression'+str(y_stock)+'_Change'+str(change)+'_Backtime'+str(back_time)+'_DayTrained'+str(df_org.shape[0])+'.csv', 'w', newline='')
      writer = csv.writer(file)
      writer.writerow(["date", "lastday_close_price", "profile","gold profile","price_predict","model","buy condition","buy position","sell condition","sell position","cur position","cur free"])
      
@@ -256,7 +256,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      print("predict: ",target,'days')
      print("max drawdown: ",calculate_max_drawdown(pd.Series(profile))) 
      draw_list(profile,buy_list,sell_list,gold_list,position_list,free_list,
-               "./results_pic/dayrange"+str(target)+'_sheshold'+str(reg_inc_pcent[str(target)])+'_stock_regression'+str(y_stock)+'_change'+str(change)+'_backtime'+str(back_time)+'_daysspeed'+str(len(profile))+'.jpg')
+               "./results_pic/DayWeekMonthRange"+str(target)+'_Sheshold'+str(reg_inc_pcent[str(target)])+'_StockRegression'+str(y_stock)+'_Change'+str(change)+'_Backtime'+str(back_time)+'_Dayspend'+str(len(profile))+'.jpg')
      print("final value :", cur_free+cur_position*exeday_open_price)
      print("win rate :", (cur_free+cur_position*exeday_open_price)/gold_list[-1])
      writer.writerow([str(y_stock), regression_train_targtes,
