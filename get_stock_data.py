@@ -207,6 +207,7 @@ def build_frame(stock_keys,start_date,end_date):
                     table.loc[df[key,'day']['日期'][day],str(key)+'week_date']   = df[key,'week']['日期'][week_index-1]
                     table.loc[df[key,'day']['日期'][day],str(key)+'month_date']  = df[key,'month']['日期'][month_index-1]
                     table.loc[df[key,'day']['日期'][day],str(key)+'close']       = df[key,'day']['收盘'][day]
+                    table.loc[df[key,'day']['日期'][day],str(key)+'open']         = df[key,'day']['开盘'][day]
                     table.loc[df[key,'day']['日期'][day],str(key)+'volume'] = df[key,'day']['成交量'][day]
                     if(month_index-back_times>=0):
 

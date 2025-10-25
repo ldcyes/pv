@@ -50,25 +50,44 @@ if __name__ == "__main__":
         start_date = test_start_date
         end_date   = str(formatted_date)
         file_name = "STOCK_TEST_DATA.csv"
-    
-    mail_stocks = ['SOXX']
+
+    mail_stocks = ['SOXX','AMD','COIN','TSLA','BABA']# 'INTC', 'QCOM', 'AVGO', 'MSFT', 'GOOG', 'Meta', 'BABA', 'BILI', 'COIN', 'TSLA']
     html_content = []
     col_list = []
-       
-    for target in train_targets:
-              for string in [' pred',' confid']:
-                     col_list.append(str(target)+string)
        
     model_name=[#'decision tree',#'SVM',
                    'RandomForest',#'MLP','SGD',
                    'XGboost']
        
     res = pd.DataFrame(columns=col_list,index=model_name)
+    res_list = []
+    table = build_frame(['QQQ']+mail_stocks, start_date, end_date)
+
     for stock in mail_stocks:
-        table= build_frame(['QQQ',stock],start_date,end_date)
-        csv_df = pd.DataFrame(data=table,index=None)
-        csv_df.to_csv("./stock_data/"+str(stock)+file_name)
-        df_org = pd.read_csv("./stock_data/"+str(stock)+"STOCK_TRAIN_DATA.csv")
-        res = train_once(df_org=df_org,x_stocks=['QQQ',stock],res_df=res,train_targets=train_targets,y_stock=stock,features=features)
-        html_content.append(res.to_html(index=True,header=True))
+        #table = build_frame(['QQQ', stock], start_date, end_date)
+        csv_df = pd.DataFrame(data=table, index=None)
+        csv_df.to_csv("./stock_data/STOCK_TRAIN_DATA.csv", index=False)
+        df_org = pd.read_csv("./stock_data/STOCK_TRAIN_DATA.csv")
+        res_temp = train_once(
+            df_org=df_org,
+            x_stocks=['QQQ', stock],
+            res_df=pd.DataFrame(columns=col_list, index=model_name),
+            train_targets=train_targets,
+            y_stock=stock,
+            features=get_features_name(7)
+        )
+        res_list.append(res_temp)
+
+    # 合并所有结果
+    res_combined = pd.concat(res_list)
+
+    # 按照 'pred' 列从大到小排序（假设列名为 'pred'，如有不同请替换为实际列名）
+    if 'pred' in res_combined.columns:
+        res_combined = res_combined.sort_values(by='pred', ascending=False)
+    elif any(col.endswith(' pred') for col in res_combined.columns):
+        # 如果有多个以 ' pred' 结尾的列，按第一个排序
+        pred_col = [col for col in res_combined.columns if col.endswith(' pred')][0]
+        res_combined = res_combined.sort_values(by=pred_col, ascending=False)
+
+    html_content.append(res_combined.to_html(index=True, header=True))
     send_email("stock predictor", html_content)

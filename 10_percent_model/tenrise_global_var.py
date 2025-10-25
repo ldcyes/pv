@@ -16,13 +16,13 @@ test_model_name=[
 #'SGD',
 'XGboost' #93
 ]
-
+back_times = 7
 gen_inc10_flag =1
-features = ["7 day up","7 day down",
-            "price/up day","price/mid day","price/low day",
-            "price/up week","price/mid week","price/low week",
-            "price/up month","price/mid month","price/low month",
-            "price/20high","price/20low",
+features = ["7dayup","7daydown",
+            "price_up_day","price_mid_day","price_low_day",
+            "price_up_week","price_mid_week","price_low_week",
+            "price_up_month","price_mid_month","price_low_month",
+            "price20high","price20low",
 
             'near1d_open','near1d_close','near1d_high','near1d_low','near1d_volume',
             'near2d_open','near2d_close','near2d_high','near2d_low','near2d_volume',
@@ -42,11 +42,19 @@ features = ["7 day up","7 day down",
             'near4m_open','near4m_close','near4m_high','near4m_low','near4m_volume',
             'near5m_open','near5m_close','near5m_high','near5m_low','near5m_volume'
        ]
-
+is_xueqiu = 1
 train              = 1
 regress_start_date = 1500 # at lest 1000 days data 5 years
-train_start_date = '20130617'
-train_end_date   = '20241212'
-test_start_date  = '20200118'
-test_end_date    = '20250220'
+
+if(is_xueqiu):
+    train_start_date = '2012-06-17'
+    train_end_date   = '2024-07-31'
+    test_start_date  = '2024-08-18'
+    test_end_date    = '2025-09-09'
+else:
+    train_start_date = '20180618'
+    train_end_date   = '20240321'
+    test_start_date  = '20180618'
+    test_end_date    = '20180330'
+
 test_size = 0.2 # train ratio

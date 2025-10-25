@@ -33,7 +33,7 @@ def draw_list(my_list,buy_point,sell_point,gold_point,positon,free,file_name):
     plt.plot(time, gold_point,label='gold',color='green')  
     plt.plot(time, positon,label='position',color='k')
     plt.plot(time, free,label='free',color='c')  
-    plt.title(y_stock)  
+    plt.title(y_stock)   
     plt.xlabel('Time')  
     plt.ylabel('net value')  
     plt.grid(True)  
@@ -75,11 +75,14 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
 
      file = open('profilo_inference_'+str(stock)+'DayRange'+str(regression_train_targtes[0])+'_Sheshold'+str(reg_inc_pcent[str(regression_train_targtes[0])])+'_stock_regression'+str(y_stock)+'_Change'+str(change)+'_Backtime'+str(back_time)+'_DayTrained'+str(df_org.shape[0])+'.csv', 'w', newline='')
      writer = csv.writer(file)
-     writer.writerow(["date", "lastday_close_price", "profile","gold profile","price_predict","model","buy condition","buy position","sell condition","sell position","cur position","cur free"])
+     writer.writerow(["date", "lastday_close_price","exeday_open_price","exeday_close_price", "profile","gold profile","price_predict","model","buy condition","buy position","sell condition","sell position","cur position","cur free"])
      
      # increment the data for trainning and inference with new trainning data
      is_first_price = 1
      print(regress_start_date,df_org.shape[0])
+
+     trade_pair = []
+
      
      for date in range(regress_start_date,df_org.shape[0]+1,1):
      
@@ -114,10 +117,10 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
           ss = MinMaxScaler()
           model_list=[#DecisionTreeRegressor(),
                       #SVR(kernel='rbf',gamma=0.1,C=1.0),
-                      RandomForestRegressor(n_jobs=-1),
+                      RandomForestRegressor(n_jobs=-1,random_state=88),
                       #MLPRegressor(hidden_layer_sizes=(128,512,1024),activation='tanh', solver='adam', alpha=1e-5, random_state=1),
                       #SGDRegressor(penalty='l2', max_iter=10000, tol=1e-5),
-                      XGBRegressor(n_jobs=-1)]
+                      XGBRegressor(n_jobs=-1,random_state=88)]
           
           model_name=[#'decision tree',
                #'SVM',
@@ -135,7 +138,8 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      
           trainendday_close_price    =filtered_df_inference.iloc[-3][y_stock+'close'] # train end day price
           testday_close_price        =filtered_df_inference.iloc[-2][y_stock+'close'] # test day price
-          exeday_open_price          =filtered_df_inference.iloc[-1][y_stock+'close']  # exe day open price
+          exeday_open_price          =filtered_df_inference.iloc[-1][y_stock+'open'] # exe day open price
+          exeday_close_price         =filtered_df_inference.iloc[-1][y_stock+'close'] # exe day open price
           
           sharp_down_sell_condition =  testday_close_price/trainendday_close_price < 0.9566 #test only
 
@@ -143,10 +147,11 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                first_price = testday_close_price
                is_first_price = 0
                cur_position = int(start_value/exeday_open_price)
-               cur_free = start_value - cur_position*exeday_open_price
+               cur_free     = start_value - cur_position*exeday_open_price
                last_buy_condition = 0
                last_sell_condition = 0
-     
+               latest_buy_price = testday_close_price
+          sel_model_name = ""
           for target in regression_train_targtes:
                  
                print("------------------------------  "+ str(target)+" day new training and test --------------------------------")
@@ -168,16 +173,18 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                     print("trainning error")
                     print(mean_squared_error(test_y, predictions))
                     # the mimimal loss predict will be recorded
+                    sel_model = 0
                     if(mean_squared_error(test_y, predictions)<mean_squared_error_value):
-                         mean_squared_error_value =  mean_squared_error(test_y, predictions)
+                         mean_squared_error_value = mean_squared_error(test_y, predictions)
                          sel_model = 1
                     # on need to record model
                     #with open("./model/"+str(model_name[i])+str(target)+'_model.pkl','wb') as f:
                     #       pickle.dump(model, f)
-                    i=i+1
+                    
                     #print(filtered_df_inference[features_x][-1:].shape)
                     print(filtered_df_inference[-2:][y_stock+'date']) # 2012-08-27
                     if(sel_model==1):
+                         sel_model_name = model_name[i]
                          #print(filtered_df_inference[features_remain][-1:]) # 2012-08-27
                          # where price is a rise ratio , not absolute price
                          price=model.predict(filtered_df_inference[features_x][-2:-1].values)
@@ -185,6 +192,7 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                          print(price)
                          model_list_record.append(model_name[i-1])
                          price_list.append(price.tolist()[0])
+                    i=i+1
 
                print("------------------------------ train end ------------------------------")
 
@@ -193,12 +201,13 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                
                sell_condition = price <= sell_shreshold and last_sell_condition >= cnt_sell
                sell_condition = sell_condition or sharp_down_sell_condition
+               buy_condition = False
                if(sell_condition==False):
                     buy_condition  = price >= buy_shreshold and last_buy_condition >= cnt_buy
 
                # 连续记录达到sell和buy条件的次数
                if(price >= buy_shreshold):
-                    last_buy_condition += price >= buy_shreshold
+                    last_buy_condition  += price >= buy_shreshold
                else:
                     last_buy_condition = 0
                if(price <= sell_shreshold):
@@ -207,9 +216,10 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                     last_buy_condition = 0
      
                # how much to buy and sell
-               buy_position = 0
+               buy_position  = 0
                sell_position = 0
                if(sell_condition):
+                    trade_pair.append([exeday_open_price,latest_buy_price])
                     sell_position = int(cur_position*change)
                     if(cur_position>=sell_position):
                          cur_free     = cur_free + sell_position*exeday_open_price
@@ -218,9 +228,10 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                          cur_free = cur_free + exeday_open_price*cur_position
                          cur_position = 0
                elif(buy_condition):
+                    latest_buy_price = exeday_open_price
                     buy_position = int(cur_free/exeday_open_price*change)
-                    if((buy_position * exeday_open_price) < cur_free ):
-                         cur_free     = cur_free- buy_position*exeday_open_price
+                    if((buy_position * exeday_open_price) < cur_free):
+                         cur_free     = cur_free - buy_position*exeday_open_price
                          cur_position = cur_position+ buy_position
      
                position_list.append(cur_position*100)
@@ -237,19 +248,23 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
      
                profile.append(cur_free+cur_position*exeday_open_price)
                gold_list.append(exeday_open_price*start_value/first_price)
-               
+               #"date", "lastday_close_price", "profile","gold profile","price_predict","model",
+               #"buy condition","buy position","sell condition","sell position","cur position","cur free"])
+     
                writer.writerow([filtered_df_inference[-1:][y_stock+'date'],        # exe date 2012-08-28
-                                exeday_open_price,                                 # exe date price 2012-08-28 price
+                                testday_close_price,                               # last day price 2012-08-27
+                                exeday_open_price,                                 # exe date price 2012-08-28
+                                exeday_close_price,  
                                 cur_free+cur_position*exeday_open_price,           # profile
                                 exeday_open_price*(start_value/first_price),       # always hold value
                                 price,
-                                model_name,
-                                buy_condition,                # buy condition   
-                                buy_position,                    # buy position
+                                sel_model_name,                                    # model name    
+                                buy_condition,                                     # buy condition   
+                                buy_position,                                      # buy position
                                 sell_condition,
                                 sell_position,
-                                cur_position,          # cur position
-                                cur_free])             # cur free
+                                cur_position,                                      # cur position
+                                cur_free])                                         # cur free
      
      print("------=====------")
      print("valid days: ",len(profile))
@@ -263,6 +278,8 @@ def regression(df_org,features_remain,features_x,regress_start_date,regression_t
                               change,len(profile),calculate_max_drawdown(pd.Series(profile)),
                               reg_inc_pcent[str(target)],
                               cur_free+cur_position*exeday_open_price,(cur_free+cur_position*exeday_open_price)/gold_list[-1]])
+     for trade in trade_pair:
+          writer.writerow(["buy price ",trade[1]," sell price ",trade[0]," profit ",trade[0]-trade[1]," profit pcent ",(trade[0]-trade[1])/trade[1]])
      regression_log.writerow([str(y_stock), regression_train_targtes,
                               change,len(profile),calculate_max_drawdown(pd.Series(profile)),
                               reg_inc_pcent[str(target)],
@@ -273,7 +290,7 @@ if __name__ == "__main__":
 
      print("------------------=== prepare data ===------------------")
 
-     df_org = pd.read_csv("./stock_data/SOXXSTOCK_TRAIN_DATA.csv")
+     df_org = pd.read_csv("./stock_data/SOXX_STOCK_TRAIN_DATA.csv")
      
      file = open('profilo_inference_all.csv', 'w', newline='')
      writer = csv.writer(file)
@@ -288,13 +305,14 @@ if __name__ == "__main__":
           for stock in x_stocks:
                features_remain.append(stock+'date')
                features_remain.append(stock+'close')
-
+               features_remain.append(stock+'open')
                for feature in features:
                     features_remain.append(stock+feature)
                     features_x.append(stock+feature)
 
           features_remain.append(y_stock+'date')
           features_remain.append(y_stock+'close')
+          features_remain.append(y_stock+'open')
           for feature in features:
                features_remain.append(y_stock+feature)
                features_x.append(y_stock+feature)
